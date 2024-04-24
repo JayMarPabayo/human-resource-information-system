@@ -10,7 +10,7 @@ const AppLayout = () => {
         <nav className="col-span-1 rounded-md bg-slate-100 bg-opacity-80 h-full">
           <Sidebar />
         </nav>
-        <main className="col-span-4 rounded-md shadow-md bg-slate-100 bg-opacity-80 p-5">
+        <main className="col-span-4 rounded-md shadow-md bg-slate-100 bg-opacity-80 p-5 relative">
           <Outlet />
         </main>
       </div>

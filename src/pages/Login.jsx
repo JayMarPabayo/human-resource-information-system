@@ -1,15 +1,19 @@
 import { useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 
+import Alert from "../utils/Alert";
+
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [alert, setAlert] = useState(false);
 
   const handleLogin = () => {
     if (username.trim() !== "" && password.trim() !== "") {
       window.location = "/dashboard";
     } else {
-      alert("Both fields are required.");
+      setAlert(true);
+      return;
     }
   };
 
@@ -33,15 +37,15 @@ const Login = () => {
           eveniet error dolores fugit est quam qui sapiente vitae.
         </p>
       </div>
-      <form className="w-[30rem] h-3/5 px-5 bg-white bg-opacity-30 rounded-md shadow-md flex flex-col gap-y-7 py-10">
+      <form className="w-[30rem] h-3/5 p-8 bg-white bg-opacity-30 rounded-md shadow-md flex flex-col gap-y-7 py-10">
         <h6 className="text-center text-2xl font-semibold text-slate-800">
-          Log in
+          Member Log in
         </h6>
         <div className="relative">
           <input
             type="text"
             className="w-full py-2 pl-10 pr-4 leading-tight focus:outline-none focus:shadow-outline border border-gray-300 rounded-md"
-            placeholder="Username"
+            placeholder="Enter Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
@@ -53,7 +57,7 @@ const Login = () => {
           <input
             type="password"
             className="w-full py-2 pl-10 pr-4 leading-tight focus:outline-none focus:shadow-outline border border-gray-300 rounded-md"
-            placeholder="Password"
+            placeholder="Enter Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -61,6 +65,13 @@ const Login = () => {
             <FaLock className="text-gray-500" />
           </div>
         </div>
+        {alert && (
+          <Alert
+            subject="Warning:"
+            body="Fields can't be empty"
+            closer={setAlert}
+          />
+        )}
         <button
           type="button"
           className="mt-auto w-full text-white bg-slate-800 py-3 rounded-md font-semibold hover:bg-slate-600 transition-all duration-300"
