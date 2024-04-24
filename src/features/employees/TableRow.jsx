@@ -5,6 +5,7 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import Modal from "../../utils/Modal";
 import CreateForm from "./CreateForm";
+import ViewDataForm from "./ViewDataForm";
 
 const TableRow = ({
   employee,
@@ -13,6 +14,7 @@ const TableRow = ({
   setSelectedEmployee,
 }) => {
   const [showUpdateForm, setShowUpdateForm] = useState(false);
+  const [showViewForm, setShowViewForm] = useState(false);
 
   return (
     <>
@@ -55,6 +57,7 @@ const TableRow = ({
             type="button"
             title="View"
             className="text-white w-full bg-slate-700 py-1 px-2 rounded-md hover:bg-slate-600 hover:scale-110 transition-all duration-300"
+            onClick={() => setShowViewForm((bol) => !bol)}
           >
             <FaEye className="mx-auto" />
           </button>
@@ -82,6 +85,12 @@ const TableRow = ({
       <Modal open={showUpdateForm} size="w-[78rem]">
         <CreateForm
           onClose={() => setShowUpdateForm(false)}
+          employeeData={employee}
+        />
+      </Modal>
+      <Modal open={showViewForm} size="w-[78rem]">
+        <ViewDataForm
+          onClose={() => setShowViewForm(false)}
           employeeData={employee}
         />
       </Modal>
