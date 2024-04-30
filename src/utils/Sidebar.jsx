@@ -19,20 +19,20 @@ const Sidebar = () => {
         </li>
         <li>
           <NavLink
-            to="/account"
-            className={({ isActive }) => (isActive ? linkACtive : linkStyles)}
-          >
-            <IoSettings />
-            <span className="text-gray-700">Account</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
             to="/employee"
             className={({ isActive }) => (isActive ? linkACtive : linkStyles)}
           >
             <IoPeople />
             <span className="text-gray-700">Employee</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/administration"
+            className={({ isActive }) => (isActive ? linkACtive : linkStyles)}
+          >
+            <IoSettings />
+            <span className="text-gray-700">Administration</span>
           </NavLink>
         </li>
       </ul>

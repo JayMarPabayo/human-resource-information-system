@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { BsFillPersonVcardFill } from "react-icons/bs";
 import { MdFamilyRestroom, MdWorkHistory } from "react-icons/md";
+import { useForm } from "react-hook-form";
+
 import { FaGraduationCap } from "react-icons/fa";
 import { RiGovernmentFill } from "react-icons/ri";
-import { useForm } from "react-hook-form";
+import { BiSolidGroup } from "react-icons/bi";
 
 import { useQuery } from "@tanstack/react-query";
 import { getDepartments } from "../../services/apiDepartments";
@@ -18,17 +20,9 @@ import BigSpinner from "../../utils/BigSpinner";
 import citizenships from "../../utils/citizenships";
 
 const CreateForm = ({ onClose, employeeData = {} }) => {
-  const { id: editID, ...editValues } = employeeData;
-  const isEditSession = Boolean(editID);
-  const { register, handleSubmit, reset, formState } = useForm({
-    defaultValues: isEditSession ? editValues : {},
-  });
-
-  const [activeTab, setActiveTab] = useState(0);
   const { employeeCreating, createEmployee } = useCreateEmployee();
   const { employeeUpdating, updateEmployee } = useUpdateEmployee();
-  const { errors } = formState;
-
+  const [activeTab, setActiveTab] = useState(0);
   const handleTabClick = (index) => {
     setActiveTab(index);
   };
@@ -60,20 +54,31 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
     },
   ];
 
-  function onError(errors) {
-    console.log(errors);
-  }
-
   // -- API Calls
   const { data: departments } = useQuery({
     queryKey: ["departments"],
     queryFn: getDepartments,
   });
 
+  const { id: editID, ...editValues } = employeeData;
+  const isEditSession = Boolean(editID);
+
+  // -- form Hook
+  const { register, handleSubmit, reset, formState } = useForm({
+    defaultValues: isEditSession ? editValues : {},
+  });
+
+  const { errors } = formState;
+
+  function onError(errors) {
+    console.error(errors);
+  }
+
   const isLoading = employeeCreating || employeeUpdating;
 
   function onSubmit(data) {
     delete data.created_at;
+    delete data.departments;
     if (isEditSession) {
       updateEmployee(
         {
@@ -105,16 +110,17 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
         <section className="flex items-center justify-between">
           <h6 className="text-xl font-semibold text-slate-800">New Employee</h6>
           <div className="flex gap-x-2 items-center">
+            <BiSolidGroup className="text-lg text-slate-700" />
             <h6 className="text-base font-medium text-slate-500">
               Department / Designation
             </h6>
             <SelectInput
               textSize="text-xs"
-              width="w-36"
+              width="w-40"
               {...register("employeeDepartment")}
               options={departments?.map((item) => ({
                 label: item.departmentName,
-                value: item.departmentName,
+                value: `${item.id}`,
               }))}
             />
             <TextInput

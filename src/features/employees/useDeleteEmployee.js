@@ -9,7 +9,7 @@ export function useDeleteEmployee() {
     mutationFn: (id) => deleteEmployeeApi(id),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["employee"],
+        queryKey: ["employees"],
       });
     },
     onError: (err) => alert(err.message),

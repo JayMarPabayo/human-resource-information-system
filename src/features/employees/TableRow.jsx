@@ -15,7 +15,6 @@ const TableRow = ({
 }) => {
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [showViewForm, setShowViewForm] = useState(false);
-
   return (
     <>
       <div
@@ -39,8 +38,8 @@ const TableRow = ({
               : ""
           }`}
         </div>
-        <div className="col-span-1 py-2">
-          {employee.employeeDepartment || "N/A"}
+        <div className="col-span-2 py-2 truncate">
+          {employee.departments?.departmentName || "N/A"}
         </div>
         <div className="col-span-1 py-2 text-green-800">
           {employee.employeeDesignation || "N/A"}
@@ -52,7 +51,7 @@ const TableRow = ({
             ? employee.employeeMobile
             : ""}
         </div>
-        <div className="col-span-2 flex justify-between align-middle px-1 gap-x-1 py-2">
+        <div className="col-span-1 flex justify-between align-middle px-1 gap-x-1 py-2">
           <button
             type="button"
             title="View"

@@ -1,21 +1,9 @@
 import { useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 
-import Alert from "../utils/Alert";
-
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [alert, setAlert] = useState(false);
-
-  const handleLogin = () => {
-    if (username.trim() !== "" && password.trim() !== "") {
-      window.location = "/dashboard";
-    } else {
-      setAlert(true);
-      return;
-    }
-  };
 
   return (
     <div className="bg-gradient-to-bl from-slate-400 to-slate-600 h-screen w-full flex justify-center items-center gap-x-10">
@@ -65,17 +53,10 @@ const Login = () => {
             <FaLock className="text-gray-500" />
           </div>
         </div>
-        {alert && (
-          <Alert
-            subject="Warning:"
-            body="Fields can't be empty"
-            closer={setAlert}
-          />
-        )}
         <button
           type="button"
           className="mt-auto w-full text-white bg-slate-800 py-3 rounded-md font-semibold hover:bg-slate-600 transition-all duration-300"
-          onClick={handleLogin}
+          onClick={() => {}}
         >
           Log in
         </button>

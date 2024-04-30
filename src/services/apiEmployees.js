@@ -4,9 +4,10 @@ export async function getEmployees({ searchKey = "" }) {
   const searchPattern = `%${searchKey}%`;
   let { data, error } = await supabase
     .from("employees")
-    .select("*")
+    .select(`*, departments(*)`)
+    .order("employeeFirstName", { ascending: true })
     .or(
-      `employeeFirstName.ilike.${searchPattern},employeeMiddleName.ilike.${searchPattern},employeeLastName.ilike.${searchPattern}`
+      `employeeFirstName.ilike.${searchPattern},employeeMiddleName.ilike.${searchPattern},employeeLastName.ilike.${searchPattern},employeeDesignation.ilike.${searchPattern}`
     );
 
   if (error) {
@@ -33,7 +34,7 @@ export async function createUpdateEmployee(employee, id) {
   const { data, error } = await query.select();
   if (error) {
     console.error(error);
-    throw new error("creating employee record failed");
+    throw new error("creating/updating employee record failed");
   }
 
   return data;

@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+
 import { BsFillPersonVcardFill } from "react-icons/bs";
 import { MdFamilyRestroom, MdWorkHistory } from "react-icons/md";
 import { FaGraduationCap } from "react-icons/fa";
 import { RiGovernmentFill } from "react-icons/ri";
-import { useForm } from "react-hook-form";
+import { BiSolidGroup } from "react-icons/bi";
 
 import PropTypes from "prop-types";
 
@@ -11,6 +13,7 @@ import TextInput from "../../utils/TextInput";
 
 const ViewDataForm = ({ onClose, employeeData = {} }) => {
   const { ...values } = employeeData;
+  values.employeeDepartment = values.departments?.departmentName;
   const { register } = useForm({
     defaultValues: values,
   });
@@ -58,6 +61,7 @@ const ViewDataForm = ({ onClose, employeeData = {} }) => {
             View Employee
           </h6>
           <div className="flex gap-x-2 items-center">
+            <BiSolidGroup className="text-lg text-slate-700" />
             <h6 className="text-base font-medium text-slate-500">
               Department / Designation
             </h6>

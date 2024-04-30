@@ -51,10 +51,10 @@ const Employee = () => {
                       Last Name, First Name, M.I.
                     </span>
                   </div>
-                  <div className="py-2 col-span-1">Department</div>
+                  <div className="py-2 col-span-2">Department</div>
                   <div className="py-2 col-span-1">Designation</div>
                   <div className="py-2 col-span-2">Contact Details</div>
-                  <div className="py-2 text-center col-span-2">Action</div>
+                  <div className="py-2 text-center col-span-1">Action</div>
                 </section>
                 <section className="w-full text-xs font-normal tracking-wide">
                   {data?.map((employee, index) => {

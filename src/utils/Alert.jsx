@@ -8,11 +8,11 @@ const Alert = ({ subject, body, closer }) => {
 
   return (
     <div
-      className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative flex align-middle gap-x-1"
+      className="w-fit bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative flex align-middle gap-x-1 text-xs"
       role="alert"
     >
       <span>
-        <RiErrorWarningFill className="fill-current h-6 w-6 text-red-700" />
+        <RiErrorWarningFill className="fill-current h-5 w-5 text-red-700" />
       </span>
       <strong className="font-bold ms-2">{subject}</strong>
       <span className="block sm:inline">{` ${body}`}</span>
@@ -20,7 +20,7 @@ const Alert = ({ subject, body, closer }) => {
         className="absolute top-0 bottom-0 right-0 px-4 py-3 text-red-700 hover:scale-110 cursor-pointer hover:text-red-800"
         onClick={handleClose}
       >
-        <RiCloseCircleFill className="fill-current h-7 w-7" />
+        <RiCloseCircleFill className="fill-current h-5 w-5" />
       </span>
     </div>
   );

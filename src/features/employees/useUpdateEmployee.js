@@ -8,7 +8,7 @@ export function useUpdateEmployee() {
     mutationFn: ({ employee, id }) => createUpdateEmployee(employee, id),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["employee"],
+        queryKey: ["employees"],
       });
     },
     onError: (err) => console.error(err.message),

@@ -6,7 +6,7 @@ import AppLayout from "./utils/AppLayout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Employee from "./pages/Employee";
-import Account from "./pages/Account";
+import Administration from "./pages/Administration";
 import PageNotFound from "./pages/PageNotFound";
 
 const queryClient = new QueryClient({
@@ -26,7 +26,7 @@ const App = () => {
           <Route element={<AppLayout />}>
             <Route index element={<Navigate replace to="dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="account" element={<Account />} />
+            <Route path="administration" element={<Administration />} />
             <Route path="employee" element={<Employee />} />
           </Route>
           <Route path="login" element={<Login />} />

@@ -6,14 +6,16 @@ const Modal = ({ open, children, size }) => {
         open ? "visible bg-black/20" : "invisible"
       }`}
     >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className={`${size} bg-white rounded-xl shadow p-6 transition-all ${
-          open ? "scale-100 opacity-100" : "scale-125 opacity-0"
-        }`}
-      >
-        {children}
-      </div>
+      {open && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className={`${size} bg-white rounded-xl shadow p-6 transition-all ${
+            open ? "scale-100 opacity-100" : "scale-125 opacity-0"
+          }`}
+        >
+          {children}
+        </div>
+      )}
     </div>
   );
 };
