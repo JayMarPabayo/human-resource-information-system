@@ -510,9 +510,6 @@ const ViewDataForm = ({ onClose, employeeData = {} }) => {
   function FamilyBackgroundTab() {
     return (
       <section className="mt-3 h-[30rem] overflow-y-scroll overflow-x-hidden">
-        <h3 className="text-xl font-light tracking-wider text-gray-500">
-          Family Background
-        </h3>
         <section className="mt-3 h-[30rem] overflow-y-scroll overflow-x-hidden">
           {/* FATHER */}
           <h3 className="text-xl font-light tracking-wider text-gray-500">
