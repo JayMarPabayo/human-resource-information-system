@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { BsFillPersonVcardFill } from "react-icons/bs";
-import { MdFamilyRestroom, MdWorkHistory } from "react-icons/md";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
+import { BsFillPersonVcardFill } from "react-icons/bs";
+import { FaCirclePlus, FaTrash } from "react-icons/fa6";
+import { MdFamilyRestroom, MdWorkHistory } from "react-icons/md";
 import { FaGraduationCap } from "react-icons/fa";
 import { RiGovernmentFill } from "react-icons/ri";
 import { BiSolidGroup } from "react-icons/bi";
@@ -22,7 +23,10 @@ import citizenships from "../../utils/citizenships";
 const CreateForm = ({ onClose, employeeData = {} }) => {
   const { employeeCreating, createEmployee } = useCreateEmployee();
   const { employeeUpdating, updateEmployee } = useUpdateEmployee();
+  const [childrenList, setChildrenList] = useState([]);
+
   const [activeTab, setActiveTab] = useState(0);
+
   const handleTabClick = (index) => {
     setActiveTab(index);
   };
@@ -63,8 +67,18 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
   const { id: editID, ...editValues } = employeeData;
   const isEditSession = Boolean(editID);
 
+  useEffect(() => {
+    if (isEditSession) {
+      const newChildrenList = editValues.children.map((e, index) => ({
+        key: `child-${index}`,
+        ...e,
+      }));
+      setChildrenList(newChildrenList); // This will only run once when `editID` or `editValues` change
+    }
+  }, [isEditSession, editValues.children]); // Define dependencies to avoid unnecessary re-renders
+
   // -- form Hook
-  const { register, handleSubmit, reset, formState } = useForm({
+  const { register, unregister, handleSubmit, reset, formState } = useForm({
     defaultValues: isEditSession ? editValues : {},
   });
 
@@ -101,6 +115,20 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
       });
     }
   }
+
+  // -- children function
+  const addChild = () => {
+    setChildrenList((prevList) => [
+      ...prevList,
+      { key: `child-${prevList.length}` },
+    ]);
+  };
+
+  const removeChild = (key) => {
+    setChildrenList((prevList) =>
+      prevList.filter((child) => child.key !== key)
+    );
+  };
 
   return (
     <>
@@ -520,9 +548,259 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
   function FamilyBackgroundTab() {
     return (
       <section className="mt-3 h-[30rem] overflow-y-scroll overflow-x-hidden">
+        {/* FATHER */}
         <h3 className="text-xl font-light tracking-wider text-gray-500">
-          Family Background
+          Father Information
         </h3>
+        <div className="mt-3 px-2 w-full grid grid-cols-10 gap-x-2">
+          <TextInput
+            type="text"
+            textSize="text-xs"
+            width="col-span-3"
+            label="First Name"
+            errorState={errors?.fatherFirstName?.message}
+            placeholder="First Name"
+            {...register("fatherFirstName")}
+          />
+          <TextInput
+            type="text"
+            textSize="text-xs"
+            width="col-span-3"
+            label="Middle Name"
+            errorState={errors?.fatherMiddleName?.message}
+            placeholder="Middle Name"
+            {...register("fatherMiddleName")}
+          />
+          <TextInput
+            type="text"
+            textSize="text-xs"
+            width="col-span-3"
+            label="Last Name"
+            errorState={errors?.fatherLastName?.message}
+            placeholder="Last Name"
+            {...register("fatherLastName")}
+          />
+          <SelectInput
+            textSize="text-xs"
+            width="col-span-1"
+            label="Name Extension"
+            {...register("fatherNameExtension")}
+            options={[
+              { label: "", value: "" },
+              { label: "Jr.", value: "Jr." },
+              { label: "Sr.", value: "Sr." },
+              { label: "II", value: "II" },
+              { label: "III", value: "III" },
+              { label: "IV", value: "IV" },
+              { label: "V", value: "V" },
+            ]}
+          />
+        </div>
+        {/* MOTHER */}
+        <h3 className="mt-3 text-xl font-light tracking-wider text-gray-500">
+          Mother Information
+        </h3>
+        <div className="mt-3 px-2 w-full grid grid-cols-10 gap-x-2">
+          <TextInput
+            type="text"
+            textSize="text-xs"
+            width="col-span-3"
+            label="First Name"
+            errorState={errors?.motherFirstName?.message}
+            placeholder="First Name"
+            {...register("motherFirstName")}
+          />
+          <TextInput
+            type="text"
+            textSize="text-xs"
+            width="col-span-3"
+            label="Middle Name"
+            errorState={errors?.motherMiddleName?.message}
+            placeholder="Middle Name"
+            {...register("motherMiddleName")}
+          />
+          <TextInput
+            type="text"
+            textSize="text-xs"
+            width="col-span-3"
+            label="Last Name"
+            errorState={errors?.motherLastName?.message}
+            placeholder="Last Name"
+            {...register("motherLastName")}
+          />
+          <SelectInput
+            textSize="text-xs"
+            width="col-span-1"
+            label="Name Extension"
+            {...register("motherNameExtension")}
+            options={[
+              { label: "", value: "" },
+              { label: "Jr.", value: "Jr." },
+              { label: "Sr.", value: "Sr." },
+              { label: "II", value: "II" },
+              { label: "III", value: "III" },
+              { label: "IV", value: "IV" },
+              { label: "V", value: "V" },
+            ]}
+          />
+        </div>
+        {/* SPOUSE */}
+        <h3 className="mt-3 text-xl font-light tracking-wider text-gray-500">
+          Spouse Information
+        </h3>
+        <div className="mt-3 px-2 w-full grid grid-cols-10 gap-x-2">
+          <TextInput
+            type="text"
+            textSize="text-xs"
+            width="col-span-3"
+            label="First Name"
+            errorState={errors?.spouseFirstName?.message}
+            placeholder="First Name"
+            {...register("spouseFirstName")}
+          />
+          <TextInput
+            type="text"
+            textSize="text-xs"
+            width="col-span-3"
+            label="Middle Name"
+            errorState={errors?.spouseMiddleName?.message}
+            placeholder="Middle Name"
+            {...register("spouseMiddleName")}
+          />
+          <TextInput
+            type="text"
+            textSize="text-xs"
+            width="col-span-3"
+            label="Last Name"
+            errorState={errors?.spouseLastName?.message}
+            placeholder="Last Name"
+            {...register("spouseLastName")}
+          />
+          <SelectInput
+            textSize="text-xs"
+            width="col-span-1"
+            label="Name Extension"
+            {...register("spouseNameExtension")}
+            options={[
+              { label: "", value: "" },
+              { label: "Jr.", value: "Jr." },
+              { label: "Sr.", value: "Sr." },
+              { label: "II", value: "II" },
+              { label: "III", value: "III" },
+              { label: "IV", value: "IV" },
+              { label: "V", value: "V" },
+            ]}
+          />
+        </div>
+        <div className="mt-3 px-2 w-full grid grid-cols-6 gap-x-2">
+          <TextInput
+            type="text"
+            textSize="text-xs"
+            width="col-span-1"
+            label="Occupation"
+            errorState={errors?.spouseOccupation?.message}
+            placeholder="Occupation"
+            {...register("spouseOccupation")}
+          />
+          <TextInput
+            type="text"
+            textSize="text-xs"
+            width="col-span-2"
+            label="Employer/Business Name"
+            errorState={errors?.spouseEmployerBusiness?.message}
+            placeholder="Employer or Business"
+            {...register("spouseEmployerBusiness")}
+          />
+          <TextInput
+            type="text"
+            textSize="text-xs"
+            width="col-span-2"
+            label="Business Address"
+            errorState={errors?.spouseBusinessAddress?.message}
+            placeholder="Address"
+            {...register("spouseBusinessAddress")}
+          />
+          <TextInput
+            type="text"
+            textSize="text-xs"
+            width="col-span-1"
+            label="Telephone"
+            errorState={errors?.spouseTelephone?.message}
+            placeholder="No."
+            {...register("spouseTelephone")}
+          />
+        </div>
+        {/* CHILDREN */}
+        <div className="mt-3 rounded-md py-3 px-2 bg-slate-200">
+          <div className="flex text-xl items-center gap-x-4">
+            <h3 className="font-light tracking-wider text-gray-500">
+              Children
+            </h3>
+            <button
+              title="Add New Children"
+              className="cursor-pointer px-2 py-1 bg-slate-700 text-white flex items-center gap-x-2 border border-slate-600 rounded-md hover:scale-110 active:scale-95 transition-all duration-300"
+              onClick={addChild}
+            >
+              <FaCirclePlus className="" />
+              <span className="text-xs font-medium">Add</span>
+            </button>
+          </div>
+          <div className="mt-1 px-2 w-full mb-4">
+            {childrenList.map((child, index) => (
+              <div
+                key={child.key}
+                className="grid grid-cols-7 items-center gap-x-2 pt-2"
+              >
+                <TextInput
+                  type="text"
+                  textSize="text-xs"
+                  width="col-span-3"
+                  label="Full Name"
+                  errorState={
+                    errors?.children?.[index]?.childrenFullName?.message
+                  }
+                  placeholder="Children Full Name"
+                  {...register(`children.${index}.childrenFullName`, {
+                    required: "This field is required",
+                  })}
+                />
+                <SelectInput
+                  textSize="text-xs"
+                  width="col-span-1"
+                  label="Gender"
+                  {...register(`children.${index}.childrenGender`)}
+                  options={[
+                    { label: "Male", value: "Male" },
+                    { label: "Female", value: "Female" },
+                  ]}
+                />
+                <TextInput
+                  type="date"
+                  textSize="text-xs"
+                  width="col-span-1"
+                  label="Birthdate"
+                  errorState={
+                    errors?.children?.[index]?.childrenBirthdate?.message
+                  }
+                  {...register(`children.${index}.childrenBirthdate`, {
+                    required: "This field is required",
+                  })}
+                />
+                <div className="col-span-2 text-lg flex items-center px-2 pt-4 gap-x-3 text-slate-700">
+                  <button
+                    title="Remove Children"
+                    onClick={() => {
+                      unregister(`children.${index}`);
+                      removeChild(child.key);
+                    }}
+                  >
+                    <FaTrash className="cursor-pointer hover:scale-125 active:scale-95 hover:text-slate-600 transition-all duration-300" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
     );
   }

@@ -4,7 +4,7 @@ export async function getEmployees({ searchKey = "" }) {
   const searchPattern = `%${searchKey}%`;
   let { data, error } = await supabase
     .from("employees")
-    .select(`*, departments(*)`)
+    .select(`*, departments(*), children(*)`)
     .order("employeeFirstName", { ascending: true })
     .or(
       `employeeFirstName.ilike.${searchPattern},employeeMiddleName.ilike.${searchPattern},employeeLastName.ilike.${searchPattern},employeeDesignation.ilike.${searchPattern}`
@@ -19,8 +19,8 @@ export async function getEmployees({ searchKey = "" }) {
 }
 
 export async function createUpdateEmployee(employee, id) {
-  const employeesWithNull = convertEmptyStringsToNull(employee);
-
+  const { children, ...employeeWithoutChildren } = employee;
+  const employeesWithNull = convertEmptyStringsToNull(employeeWithoutChildren);
   let query = supabase.from("employees");
 
   if (!id) {
@@ -28,15 +28,43 @@ export async function createUpdateEmployee(employee, id) {
   }
 
   if (id) {
-    query = query.update(employee).eq("id", id);
+    query = query.update(employeesWithNull).eq("id", id);
   }
 
+  console.log(children);
   const { data, error } = await query.select();
+  // -- Children
+  const eid = data[0].id;
+  if (eid) {
+    await deleteChildren(eid);
+  }
+
+  if (children && Array.isArray(children)) {
+    for (const child of children) {
+      const { childrenFullName, childrenGender, childrenBirthdate } = child;
+      const childData = {
+        childrenParent: eid,
+        childrenFullName,
+        childrenGender,
+        childrenBirthdate,
+      };
+
+      // Insert the child data into the "children" table
+      const { error: childError } = await supabase
+        .from("children")
+        .insert([childData]);
+
+      if (childError) {
+        console.error(childError);
+        throw new Error("Inserting child record failed");
+      }
+    }
+  }
+
   if (error) {
     console.error(error);
     throw new error("creating/updating employee record failed");
   }
-
   return data;
 }
 
@@ -67,4 +95,18 @@ function convertEmptyStringsToNull(obj) {
   }
 
   return transformedObj;
+}
+
+export async function deleteChildren(id) {
+  const { data, error } = await supabase
+    .from("children")
+    .delete()
+    .eq("childrenParent", id);
+
+  if (error) {
+    console.error(error);
+    throw new error("deleting children record failed");
+  }
+
+  return data;
 }
