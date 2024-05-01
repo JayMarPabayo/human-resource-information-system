@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
 
 import { BsFillPersonVcardFill } from "react-icons/bs";
 import { FaCirclePlus, FaTrash } from "react-icons/fa6";
@@ -23,10 +23,6 @@ import citizenships from "../../utils/citizenships";
 const CreateForm = ({ onClose, employeeData = {} }) => {
   const { employeeCreating, createEmployee } = useCreateEmployee();
   const { updateEmployee, employeeUpdating } = useUpdateEmployee();
-  const [childrenList, setChildrenList] = useState([]);
-  const [educationList, setEducationList] = useState([]);
-  const [eligibilityList, setEligibilityList] = useState([]);
-  const [workExperienceList, setWorkExperienceList] = useState([]);
 
   const [activeTab, setActiveTab] = useState(0);
   const handleTabClick = (index) => {
@@ -68,54 +64,46 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
 
   const { id: editID, ...editValues } = employeeData;
   const isEditSession = Boolean(editID);
-
-  // -- Load children containers if exists (editSession)
-  useEffect(() => {
-    if (isEditSession) {
-      const newChildrenList = editValues.children?.map((e, index) => ({
-        key: `child-${index}`,
-        ...e,
-      }));
-      setChildrenList(newChildrenList);
-    }
-  }, [isEditSession, editValues.children]);
-
-  // -- Load educations containers if exists (editSession)
-  useEffect(() => {
-    if (isEditSession) {
-      const newEducationsList = editValues.educations?.map((e, index) => ({
-        key: `education-${index}`,
-        ...e,
-      }));
-      setEducationList(newEducationsList);
-    }
-  }, [isEditSession, editValues.educations]);
-
-  // -- Load eligibilities containers if exists (editSession)
-  useEffect(() => {
-    if (isEditSession) {
-      const newEligibilityList = editValues.eligibilities?.map((e, index) => ({
-        key: `eligibility-${index}`,
-        ...e,
-      }));
-      setEligibilityList(newEligibilityList);
-    }
-  }, [isEditSession, editValues.eligibilities]);
-
-  // -- Load workExperiences containers if exists (editSession)
-  useEffect(() => {
-    if (isEditSession) {
-      const newWorkExperience = editValues.workExperiences?.map((e, index) => ({
-        key: `work-${index}`,
-        ...e,
-      }));
-      setWorkExperienceList(newWorkExperience);
-    }
-  }, [isEditSession, editValues.workExperiences]);
-
   // -- form Hook
-  const { register, unregister, handleSubmit, reset, formState } = useForm({
+  const { register, control, handleSubmit, reset, formState } = useForm({
     defaultValues: isEditSession ? editValues : {},
+  });
+
+  // Initialize useFieldArray
+  const {
+    fields: fieldsChildren,
+    append: appendChildren,
+    remove: removeChildren,
+  } = useFieldArray({
+    control,
+    name: "children",
+  });
+
+  const {
+    fields: fieldsEducation,
+    append: appendEducation,
+    remove: deleteEducation,
+  } = useFieldArray({
+    control,
+    name: "educations",
+  });
+
+  const {
+    fields: fieldsEligibilities,
+    append: appendEligibilities,
+    remove: deleteEligibilities,
+  } = useFieldArray({
+    control,
+    name: "eligibilities",
+  });
+
+  const {
+    fields: fieldsWorkExperiences,
+    append: appendWorkExperiences,
+    remove: deleteWorkExperiences,
+  } = useFieldArray({
+    control,
+    name: "workExperiences",
   });
 
   const { errors } = formState;
@@ -154,58 +142,67 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
 
   // -- children function
   const addChild = () => {
-    setChildrenList((prevList) => [
-      ...(prevList || []),
-      { key: `child-${prevList?.length}` },
-    ]);
+    appendChildren({
+      childrenFullName: "",
+      childrenGender: "",
+      childrenBirthdate: "",
+    });
   };
 
-  const removeChild = (key) => {
-    setChildrenList((prevList) =>
-      prevList.filter((child) => child.key !== key)
-    );
+  const removeChild = (index) => {
+    removeChildren(index);
   };
 
   // -- education function
   const addEducation = () => {
-    setEducationList((prevList) => [
-      ...(prevList || []),
-      { key: `education-${prevList?.length}` },
-    ]);
+    appendEducation({
+      educationLevel: "",
+      educationSchoolName: "",
+      educationDegreeCourse: "",
+      educationAttendFrom: "",
+      educationAttendTo: "",
+      educationLevelEarned: "",
+      educationYearGraduated: "",
+      educationHonorsReceived: "",
+    });
   };
 
-  const removeEducation = (key) => {
-    setEducationList((prevList) =>
-      prevList.filter((education) => education.key !== key)
-    );
+  const removeEducation = (index) => {
+    deleteEducation(index);
   };
 
   // -- eligibility function
   const addEligibility = () => {
-    setEligibilityList((prevList) => [
-      ...(prevList || []),
-      { key: `eligibility-${prevList?.length}` },
-    ]);
+    appendEligibilities({
+      eligibilityExamName: "",
+      eligibilityExamRating: "",
+      eligibilityExamDate: "",
+      eligibilityExamPlace: "",
+      eligibilityLicenseNumber: "",
+      eligibilityLicenseValidity: "",
+    });
   };
 
-  const removeEligibility = (key) => {
-    setEligibilityList((prevList) =>
-      prevList.filter((eligibility) => eligibility.key !== key)
-    );
+  const removeEligibility = (index) => {
+    deleteEligibilities(index);
   };
 
   // -- work experience function
   const addWorkExperience = () => {
-    setWorkExperienceList((prevList) => [
-      ...(prevList || []),
-      { key: `work-${prevList?.length}` },
-    ]);
+    appendWorkExperiences({
+      workFrom: "",
+      workTo: "",
+      workPosition: "",
+      workCompany: "",
+      workMonthlySalary: "",
+      workPayGrade: "",
+      workAppointmentStatus: "",
+      workGovtService: "",
+    });
   };
 
-  const removeWorkExperience = (key) => {
-    setWorkExperienceList((prevList) =>
-      prevList.filter((work) => work.key !== key)
-    );
+  const removeWorkExperience = (index) => {
+    deleteWorkExperiences(index);
   };
 
   return (
@@ -828,9 +825,9 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
             </button>
           </div>
           <div className="mt-1 px-2 w-full mb-4">
-            {childrenList?.map((child, index) => (
+            {fieldsChildren?.map((child, index) => (
               <div
-                key={child.key}
+                key={index}
                 className="grid grid-cols-7 items-center gap-x-2 pt-2"
               >
                 <TextInput
@@ -838,19 +835,14 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   textSize="text-xs"
                   width="col-span-3"
                   label="Full Name"
-                  errorState={
-                    errors?.children?.[index]?.childrenFullName?.message
-                  }
                   placeholder="Children Full Name"
-                  {...register(`children.${index}.childrenFullName`, {
-                    required: "This field is required",
-                  })}
+                  {...register(`children[${index}].childrenFullName`)}
                 />
                 <SelectInput
                   textSize="text-xs"
                   width="col-span-1"
                   label="Gender"
-                  {...register(`children.${index}.childrenGender`)}
+                  {...register(`children[${index}].childrenGender`)}
                   options={[
                     { label: "Male", value: "Male" },
                     { label: "Female", value: "Female" },
@@ -861,19 +853,13 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   textSize="text-xs"
                   width="col-span-1"
                   label="Birthdate"
-                  errorState={
-                    errors?.children?.[index]?.childrenBirthdate?.message
-                  }
-                  {...register(`children.${index}.childrenBirthdate`, {
-                    required: "This field is required",
-                  })}
+                  {...register(`children[${index}].childrenBirthdate`)}
                 />
                 <div className="col-span-2 text-lg flex items-center px-2 pt-4 gap-x-3 text-slate-700">
                   <button
                     title="Remove Children"
                     onClick={() => {
-                      unregister(`children.${index}`);
-                      removeChild(child.key);
+                      removeChild(index);
                     }}
                   >
                     <FaTrash className="cursor-pointer hover:scale-125 active:scale-95 hover:text-slate-600 transition-all duration-300" />
@@ -904,14 +890,14 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
           </button>
         </div>
         <div className="mt-3 px-2 w-full flex flex-col gap-y-5">
-          {educationList?.map((educations, index) => (
-            <div key={educations.key} className="bg-slate-200 p-2 rounded-md">
+          {fieldsEducation?.map((educations, index) => (
+            <div key={index} className="bg-slate-200 p-2 rounded-md">
               <div className="grid grid-cols-12 gap-x-2 items-center">
                 <SelectInput
                   textSize="text-xs"
                   width="col-span-3"
                   label="School Level"
-                  {...register(`educations.${index}.educationLevel`)}
+                  {...register(`educations[${index}].educationLevel`)}
                   options={[
                     { label: "Elementary", value: "Elementary" },
                     { label: "Secondary", value: "Secondary" },
@@ -929,7 +915,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   errorState={
                     errors?.educations?.[index]?.educationSchoolName?.message
                   }
-                  {...register(`educations.${index}.educationSchoolName`, {
+                  {...register(`educations[${index}].educationSchoolName`, {
                     required: "This field is required",
                   })}
                 />
@@ -942,7 +928,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   errorState={
                     errors?.educations?.[index]?.educationDegreeCourse?.message
                   }
-                  {...register(`educations.${index}.educationDegreeCourse`, {
+                  {...register(`educations[${index}].educationDegreeCourse`, {
                     required: "This field is required",
                   })}
                 />
@@ -950,8 +936,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   <button
                     title="Remove Education Info"
                     onClick={() => {
-                      unregister(`educations.${index}`);
-                      removeEducation(educations.key);
+                      removeEducation(index);
                     }}
                   >
                     <FaTrash className="cursor-pointer hover:scale-125 active:scale-95 hover:text-slate-600 transition-all duration-300" />
@@ -971,7 +956,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   errorState={
                     errors?.educations?.[index]?.educationAttendFrom?.message
                   }
-                  {...register(`educations.${index}.educationAttendFrom`)}
+                  {...register(`educations[${index}].educationAttendFrom`)}
                 />
                 <TextInput
                   type="number"
@@ -985,7 +970,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   errorState={
                     errors?.educations?.[index]?.educationAttendTo?.message
                   }
-                  {...register(`educations.${index}.educationAttendTo`)}
+                  {...register(`educations[${index}].educationAttendTo`)}
                 />
                 <TextInput
                   type="text"
@@ -996,7 +981,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   errorState={
                     errors?.educations?.[index]?.educationLevelEarned?.message
                   }
-                  {...register(`educations.${index}.educationLevelEarned`)}
+                  {...register(`educations[${index}].educationLevelEarned`)}
                 />
                 <TextInput
                   type="number"
@@ -1010,7 +995,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   errorState={
                     errors?.educations?.[index]?.educationYearGraduated?.message
                   }
-                  {...register(`educations.${index}.educationYearGraduated`)}
+                  {...register(`educations[${index}].educationYearGraduated`)}
                 />
                 <TextInput
                   type="text"
@@ -1022,7 +1007,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                     errors?.educations?.[index]?.educationHonorsReceived
                       ?.message
                   }
-                  {...register(`educations.${index}.educationHonorsReceived`)}
+                  {...register(`educations[${index}].educationHonorsReceived`)}
                 />
               </div>
             </div>
@@ -1049,11 +1034,8 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
           </button>
         </div>
         <div className="mt-3 px-2 w-full flex flex-col gap-y-5">
-          {eligibilityList?.map((eligibilities, index) => (
-            <div
-              key={eligibilities.key}
-              className="bg-slate-200 p-2 rounded-md"
-            >
+          {fieldsEligibilities?.map((eligibilities, index) => (
+            <div key={index} className="bg-slate-200 p-2 rounded-md">
               <div className="grid grid-cols-13 gap-x-2 items-center">
                 <TextInput
                   type="text"
@@ -1064,7 +1046,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   errorState={
                     errors?.eligibilities?.[index]?.eligibilityExamName?.message
                   }
-                  {...register(`eligibilities.${index}.eligibilityExamName`, {
+                  {...register(`eligibilities[${index}].eligibilityExamName`, {
                     required: "This field is required",
                   })}
                 />
@@ -1079,7 +1061,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                     errors?.eligibilities?.[index]?.eligibilityExamRating
                       ?.message
                   }
-                  {...register(`eligibilities.${index}.eligibilityExamRating`)}
+                  {...register(`eligibilities[${index}].eligibilityExamRating`)}
                 />
                 <TextInput
                   type="date"
@@ -1089,7 +1071,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   errorState={
                     errors?.eligibilities?.[index]?.eligibilityExamDate?.message
                   }
-                  {...register(`eligibilities.${index}.eligibilityExamDate`)}
+                  {...register(`eligibilities[${index}].eligibilityExamDate`)}
                 />
                 <TextInput
                   type="text"
@@ -1101,7 +1083,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                     errors?.eligibilities?.[index]?.eligibilityExamPlace
                       ?.message
                   }
-                  {...register(`eligibilities.${index}.eligibilityExamPlace`)}
+                  {...register(`eligibilities[${index}].eligibilityExamPlace`)}
                 />
                 <TextInput
                   type="text"
@@ -1114,7 +1096,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                       ?.message
                   }
                   {...register(
-                    `eligibilities.${index}.eligibilityLicenseNumber`
+                    `eligibilities[${index}].eligibilityLicenseNumber`
                   )}
                 />
                 <TextInput
@@ -1131,15 +1113,14 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                       ?.message
                   }
                   {...register(
-                    `eligibilities.${index}.eligibilityLicenseValidity`
+                    `eligibilities[${index}].eligibilityLicenseValidity`
                   )}
                 />
                 <div className="col-span-1 self-start text-2xl flex justify-end pt-1 pe-1 gap-x-3 text-slate-700">
                   <button
                     title="Remove Eligibility"
                     onClick={() => {
-                      unregister(`eligibilities.${index}`);
-                      removeEligibility(eligibilities.key);
+                      removeEligibility(index);
                     }}
                   >
                     <FaTrash className="cursor-pointer hover:scale-125 active:scale-95 hover:text-slate-600 transition-all duration-300" />
@@ -1170,11 +1151,8 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
           </button>
         </div>
         <div className="mt-3 px-2 w-full flex flex-col gap-y-5">
-          {workExperienceList?.map((workExperiences, index) => (
-            <div
-              key={workExperiences.key}
-              className="bg-slate-200 p-2 rounded-md"
-            >
+          {fieldsWorkExperiences?.map((workExperiences, index) => (
+            <div key={index} className="bg-slate-200 p-2 rounded-md">
               <div className="grid grid-cols-12 gap-x-2 items-center">
                 <TextInput
                   type="text"
@@ -1185,7 +1163,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   errorState={
                     errors?.workExperiences?.[index]?.workCompany?.message
                   }
-                  {...register(`workExperiences.${index}.workCompany`, {
+                  {...register(`workExperiences[${index}].workCompany`, {
                     required: "This field is required",
                   })}
                 />
@@ -1198,7 +1176,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   errorState={
                     errors?.workExperiences?.[index]?.workPosition?.message
                   }
-                  {...register(`workExperiences.${index}.workPosition`, {
+                  {...register(`workExperiences[${index}].workPosition`, {
                     required: "This field is required",
                   })}
                 />
@@ -1210,7 +1188,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   errorState={
                     errors?.workExperiences?.[index]?.workFrom?.message
                   }
-                  {...register(`workExperiences.${index}.workFrom`)}
+                  {...register(`workExperiences[${index}].workFrom`)}
                 />
                 <TextInput
                   type="date"
@@ -1220,14 +1198,13 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   errorState={
                     errors?.workExperiences?.[index]?.workFrom?.message
                   }
-                  {...register(`workExperiences.${index}.workFrom`)}
+                  {...register(`workExperiences[${index}].workFrom`)}
                 />
                 <div className="col-span-2 self-start text-2xl flex justify-end pt-1 pe-1 gap-x-3 text-slate-700">
                   <button
                     title="Remove Eligibility"
                     onClick={() => {
-                      unregister(`workExperiences.${index}`);
-                      removeWorkExperience(workExperiences.key);
+                      removeWorkExperience(index);
                     }}
                   >
                     <FaTrash className="cursor-pointer hover:scale-125 active:scale-95 hover:text-slate-600 transition-all duration-300" />
@@ -1244,7 +1221,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   errorState={
                     errors?.workExperiences?.[index]?.workMonthlySalary?.message
                   }
-                  {...register(`workExperiences.${index}.workMonthlySalary`)}
+                  {...register(`workExperiences[${index}].workMonthlySalary`)}
                 />
                 <TextInput
                   type="text"
@@ -1255,14 +1232,14 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   errorState={
                     errors?.workExperiences?.[index]?.workPayGrade?.message
                   }
-                  {...register(`workExperiences.${index}.workPayGrade`)}
+                  {...register(`workExperiences[${index}].workPayGrade`)}
                 />
                 <SelectInput
                   textSize="text-xs"
                   width="col-span-2"
                   label="Status of Appointment"
                   {...register(
-                    `workExperiences.${index}.workAppointmentStatus`
+                    `workExperiences[${index}].workAppointmentStatus`
                   )}
                   options={[
                     { label: "Permanent", value: "Permanent" },
@@ -1277,7 +1254,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   textSize="text-xs"
                   width="col-span-2"
                   label="Government Service"
-                  {...register(`workExperiences.${index}.workGovtService`)}
+                  {...register(`workExperiences[${index}].workGovtService`)}
                   options={[
                     { label: "Yes", value: "Yes" },
                     { label: "No", value: "No" },

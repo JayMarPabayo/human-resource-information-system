@@ -137,6 +137,13 @@ export async function createUpdateEmployee(employee, id) {
 }
 
 export async function deleteEmployee(id) {
+  if (id) {
+    await deleteChildren(id);
+    await deleteEducations(id);
+    await deleteEligibilities(id);
+    await deleteWorkExperiences(id);
+  }
+
   const { data, error } = await supabase
     .from("employees")
     .delete()
