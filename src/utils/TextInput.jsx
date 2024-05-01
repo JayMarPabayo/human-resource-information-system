@@ -11,7 +11,7 @@ const TextInput = React.forwardRef(
           {label}
         </label>
         <input
-          className={`w-full py-[0.4rem] px-3 ${textSize} text-gray-800 font-medium tracking-widest border-2 rounded-lg ${
+          className={`w-full py-[0.4rem] px-3 ${textSize} text-gray-800 font-medium tracking-widest border-2 rounded-lg placeholder:font-normal ${
             errorState ? "border-red-700" : " border-blue-300"
           } border-opacity-50 outline-none focus:border-blue-500 transition duration-200`}
           ref={ref}

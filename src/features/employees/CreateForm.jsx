@@ -22,12 +22,13 @@ import citizenships from "../../utils/citizenships";
 
 const CreateForm = ({ onClose, employeeData = {} }) => {
   const { employeeCreating, createEmployee } = useCreateEmployee();
-  const { employeeUpdating, updateEmployee } = useUpdateEmployee();
+  const { updateEmployee, employeeUpdating } = useUpdateEmployee();
   const [childrenList, setChildrenList] = useState([]);
   const [educationList, setEducationList] = useState([]);
+  const [eligibilityList, setEligibilityList] = useState([]);
+  const [workExperienceList, setWorkExperienceList] = useState([]);
 
   const [activeTab, setActiveTab] = useState(0);
-
   const handleTabClick = (index) => {
     setActiveTab(index);
   };
@@ -68,6 +69,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
   const { id: editID, ...editValues } = employeeData;
   const isEditSession = Boolean(editID);
 
+  // -- Load children containers if exists (editSession)
   useEffect(() => {
     if (isEditSession) {
       const newChildrenList = editValues.children?.map((e, index) => ({
@@ -78,6 +80,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
     }
   }, [isEditSession, editValues.children]);
 
+  // -- Load educations containers if exists (editSession)
   useEffect(() => {
     if (isEditSession) {
       const newEducationsList = editValues.educations?.map((e, index) => ({
@@ -87,6 +90,28 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
       setEducationList(newEducationsList);
     }
   }, [isEditSession, editValues.educations]);
+
+  // -- Load eligibilities containers if exists (editSession)
+  useEffect(() => {
+    if (isEditSession) {
+      const newEligibilityList = editValues.eligibilities?.map((e, index) => ({
+        key: `eligibility-${index}`,
+        ...e,
+      }));
+      setEligibilityList(newEligibilityList);
+    }
+  }, [isEditSession, editValues.eligibilities]);
+
+  // -- Load workExperiences containers if exists (editSession)
+  useEffect(() => {
+    if (isEditSession) {
+      const newWorkExperience = editValues.workExperiences?.map((e, index) => ({
+        key: `work-${index}`,
+        ...e,
+      }));
+      setWorkExperienceList(newWorkExperience);
+    }
+  }, [isEditSession, editValues.workExperiences]);
 
   // -- form Hook
   const { register, unregister, handleSubmit, reset, formState } = useForm({
@@ -99,7 +124,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
     console.error(errors);
   }
 
-  const isLoading = employeeCreating || employeeUpdating;
+  let isLoading = employeeCreating || employeeUpdating;
 
   function onSubmit(data) {
     delete data.created_at;
@@ -152,6 +177,34 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
   const removeEducation = (key) => {
     setEducationList((prevList) =>
       prevList.filter((education) => education.key !== key)
+    );
+  };
+
+  // -- eligibility function
+  const addEligibility = () => {
+    setEligibilityList((prevList) => [
+      ...(prevList || []),
+      { key: `eligibility-${prevList?.length}` },
+    ]);
+  };
+
+  const removeEligibility = (key) => {
+    setEligibilityList((prevList) =>
+      prevList.filter((eligibility) => eligibility.key !== key)
+    );
+  };
+
+  // -- work experience function
+  const addWorkExperience = () => {
+    setWorkExperienceList((prevList) => [
+      ...(prevList || []),
+      { key: `work-${prevList?.length}` },
+    ]);
+  };
+
+  const removeWorkExperience = (key) => {
+    setWorkExperienceList((prevList) =>
+      prevList.filter((work) => work.key !== key)
     );
   };
 
@@ -209,6 +262,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
             type="button"
             title="Cancel"
             className="text-sm font-semibold w-40 text-slate-700 border border-opacity-10 border-slate-600 bg-slate-100 rounded-md hover:bg-slate-200 hover:text-slate-900 hover:scale-110 transition-all duration-300"
+            disabled={isLoading}
             onClick={() => onClose()}
           >
             <span>Cancel</span>
@@ -217,6 +271,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
             type="submit"
             title="Submit"
             className="text-sm font-semibold w-40 text-white bg-slate-700 rounded-md hover:bg-slate-600 hover:scale-110 transition-all duration-300"
+            disabled={isLoading}
           >
             <span>{isEditSession ? "Update" : "Submit"}</span>
           </button>
@@ -980,9 +1035,120 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
   function CivilServiceTab() {
     return (
       <section className="mt-3 h-[30rem] overflow-y-scroll overflow-x-hidden">
-        <h3 className="text-xl font-light tracking-wider text-gray-500">
-          Civil Service Eligibility
-        </h3>
+        <div className="flex text-xl items-center gap-x-4">
+          <h3 className="font-light tracking-wider text-gray-500">
+            Government Employment Eligibilities
+          </h3>
+          <button
+            title="Add New Eligibility"
+            className="cursor-pointer px-2 py-1 bg-slate-700 text-white flex items-center gap-x-2 border border-slate-600 rounded-md hover:scale-110 active:scale-95 transition-all duration-300"
+            onClick={addEligibility}
+          >
+            <FaCirclePlus className="" />
+            <span className="text-xs font-medium">Add</span>
+          </button>
+        </div>
+        <div className="mt-3 px-2 w-full flex flex-col gap-y-5">
+          {eligibilityList?.map((eligibilities, index) => (
+            <div
+              key={eligibilities.key}
+              className="bg-slate-200 p-2 rounded-md"
+            >
+              <div className="grid grid-cols-13 gap-x-2 items-center">
+                <TextInput
+                  type="text"
+                  textSize="text-xs"
+                  width="col-span-4"
+                  label="Examination"
+                  placeholder="Career Service/RA 1080 (BOARD/BAR) Under Special Laws/CES/CSEE/Driver's License"
+                  errorState={
+                    errors?.eligibilities?.[index]?.eligibilityExamName?.message
+                  }
+                  {...register(`eligibilities.${index}.eligibilityExamName`, {
+                    required: "This field is required",
+                  })}
+                />
+                <TextInput
+                  type="number"
+                  textSize="text-xs"
+                  width="col-span-1"
+                  label="Rating"
+                  placeholder="00.00"
+                  step=".01"
+                  errorState={
+                    errors?.eligibilities?.[index]?.eligibilityExamRating
+                      ?.message
+                  }
+                  {...register(`eligibilities.${index}.eligibilityExamRating`)}
+                />
+                <TextInput
+                  type="date"
+                  textSize="text-xs"
+                  width="col-span-2"
+                  label="Date of Examination"
+                  errorState={
+                    errors?.eligibilities?.[index]?.eligibilityExamDate?.message
+                  }
+                  {...register(`eligibilities.${index}.eligibilityExamDate`)}
+                />
+                <TextInput
+                  type="text"
+                  textSize="text-xs"
+                  width="col-span-2"
+                  label="Place of Exam"
+                  placeholder="Address"
+                  errorState={
+                    errors?.eligibilities?.[index]?.eligibilityExamPlace
+                      ?.message
+                  }
+                  {...register(`eligibilities.${index}.eligibilityExamPlace`)}
+                />
+                <TextInput
+                  type="text"
+                  textSize="text-xs"
+                  width="col-span-2"
+                  label="License"
+                  placeholder="No."
+                  errorState={
+                    errors?.eligibilities?.[index]?.eligibilityLicenseNumber
+                      ?.message
+                  }
+                  {...register(
+                    `eligibilities.${index}.eligibilityLicenseNumber`
+                  )}
+                />
+                <TextInput
+                  type="number"
+                  textSize="text-xs"
+                  width="col-span-1"
+                  label="Validity"
+                  placeholder="YYYY"
+                  min="1900"
+                  max="2100"
+                  step="1"
+                  errorState={
+                    errors?.eligibilities?.[index]?.eligibilityLicenseValidity
+                      ?.message
+                  }
+                  {...register(
+                    `eligibilities.${index}.eligibilityLicenseValidity`
+                  )}
+                />
+                <div className="col-span-1 self-start text-2xl flex justify-end pt-1 pe-1 gap-x-3 text-slate-700">
+                  <button
+                    title="Remove Eligibility"
+                    onClick={() => {
+                      unregister(`eligibilities.${index}`);
+                      removeEligibility(eligibilities.key);
+                    }}
+                  >
+                    <FaTrash className="cursor-pointer hover:scale-125 active:scale-95 hover:text-slate-600 transition-all duration-300" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
     );
   }
@@ -990,9 +1156,137 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
   function WorkExperienceTab() {
     return (
       <section className="mt-3 h-[30rem] overflow-y-scroll overflow-x-hidden">
-        <h3 className="text-xl font-light tracking-wider text-gray-500">
-          Work Experience
-        </h3>
+        <div className="flex text-xl items-center gap-x-4">
+          <h3 className="font-light tracking-wider text-gray-500">
+            Employment/Work History
+          </h3>
+          <button
+            title="Add New Work History"
+            className="cursor-pointer px-2 py-1 bg-slate-700 text-white flex items-center gap-x-2 border border-slate-600 rounded-md hover:scale-110 active:scale-95 transition-all duration-300"
+            onClick={addWorkExperience}
+          >
+            <FaCirclePlus className="" />
+            <span className="text-xs font-medium">Add</span>
+          </button>
+        </div>
+        <div className="mt-3 px-2 w-full flex flex-col gap-y-5">
+          {workExperienceList?.map((workExperiences, index) => (
+            <div
+              key={workExperiences.key}
+              className="bg-slate-200 p-2 rounded-md"
+            >
+              <div className="grid grid-cols-12 gap-x-2 items-center">
+                <TextInput
+                  type="text"
+                  textSize="text-xs"
+                  width="col-span-4"
+                  label="Department/Agency/Office/Company"
+                  placeholder="Write in Full/Do not abbreviate"
+                  errorState={
+                    errors?.workExperiences?.[index]?.workCompany?.message
+                  }
+                  {...register(`workExperiences.${index}.workCompany`, {
+                    required: "This field is required",
+                  })}
+                />
+                <TextInput
+                  type="text"
+                  textSize="text-xs"
+                  width="col-span-2"
+                  label="Position Title"
+                  placeholder="Position Title"
+                  errorState={
+                    errors?.workExperiences?.[index]?.workPosition?.message
+                  }
+                  {...register(`workExperiences.${index}.workPosition`, {
+                    required: "This field is required",
+                  })}
+                />
+                <TextInput
+                  type="date"
+                  textSize="text-xs"
+                  width="col-span-2"
+                  label="From"
+                  errorState={
+                    errors?.workExperiences?.[index]?.workFrom?.message
+                  }
+                  {...register(`workExperiences.${index}.workFrom`)}
+                />
+                <TextInput
+                  type="date"
+                  textSize="text-xs"
+                  width="col-span-2"
+                  label="To"
+                  errorState={
+                    errors?.workExperiences?.[index]?.workFrom?.message
+                  }
+                  {...register(`workExperiences.${index}.workFrom`)}
+                />
+                <div className="col-span-2 self-start text-2xl flex justify-end pt-1 pe-1 gap-x-3 text-slate-700">
+                  <button
+                    title="Remove Eligibility"
+                    onClick={() => {
+                      unregister(`workExperiences.${index}`);
+                      removeWorkExperience(workExperiences.key);
+                    }}
+                  >
+                    <FaTrash className="cursor-pointer hover:scale-125 active:scale-95 hover:text-slate-600 transition-all duration-300" />
+                  </button>
+                </div>
+              </div>
+              <div className="grid grid-cols-12 gap-x-2 items-center mt-2">
+                <TextInput
+                  type="number"
+                  textSize="text-xs"
+                  width="col-span-2"
+                  label="Monthly Salary"
+                  placeholder="₱"
+                  errorState={
+                    errors?.workExperiences?.[index]?.workMonthlySalary?.message
+                  }
+                  {...register(`workExperiences.${index}.workMonthlySalary`)}
+                />
+                <TextInput
+                  type="text"
+                  textSize="text-xs"
+                  width="col-span-2"
+                  label="Salary/Job/Pay Grade"
+                  placeholder="00-0"
+                  errorState={
+                    errors?.workExperiences?.[index]?.workPayGrade?.message
+                  }
+                  {...register(`workExperiences.${index}.workPayGrade`)}
+                />
+                <SelectInput
+                  textSize="text-xs"
+                  width="col-span-2"
+                  label="Status of Appointment"
+                  {...register(
+                    `workExperiences.${index}.workAppointmentStatus`
+                  )}
+                  options={[
+                    { label: "Permanent", value: "Permanent" },
+                    { label: "Job Order", value: "Job Order" },
+                    { label: "Regular", value: "Regular" },
+                    { label: "Probationary", value: "Probationary" },
+                    { label: "Part-time", value: "Part-time" },
+                    { label: "Temporary", value: "Temporary" },
+                  ]}
+                />
+                <SelectInput
+                  textSize="text-xs"
+                  width="col-span-2"
+                  label="Government Service"
+                  {...register(`workExperiences.${index}.workGovtService`)}
+                  options={[
+                    { label: "Yes", value: "Yes" },
+                    { label: "No", value: "No" },
+                  ]}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
     );
   }

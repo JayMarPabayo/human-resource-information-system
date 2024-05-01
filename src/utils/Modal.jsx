@@ -3,7 +3,7 @@ const Modal = ({ open, children, size }) => {
   return (
     <div
       className={`fixed inset-0 flex justify-center items-center transition-all duration-300 ${
-        open ? "visible bg-black/20" : "invisible"
+        open ? "visible bg-black/40" : "invisible"
       }`}
     >
       {open && (

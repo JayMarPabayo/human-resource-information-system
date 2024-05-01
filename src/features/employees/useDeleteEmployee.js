@@ -5,7 +5,7 @@ import { deleteEmployee as deleteEmployeeApi } from "../../services/apiEmployees
 export function useDeleteEmployee() {
   const queryClient = useQueryClient();
 
-  const { isLoading: isDeleting, mutate: deleteEmployee } = useMutation({
+  const { isPending: isDeleting, mutate: deleteEmployee } = useMutation({
     mutationFn: (id) => deleteEmployeeApi(id),
     onSuccess: () => {
       queryClient.invalidateQueries({

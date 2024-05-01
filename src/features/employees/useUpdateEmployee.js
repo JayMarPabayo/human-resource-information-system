@@ -4,7 +4,7 @@ import { createUpdateEmployee } from "../../services/apiEmployees";
 export function useUpdateEmployee() {
   const queryClient = useQueryClient();
 
-  const { mutate: updateEmployee, isLoading: employeeUpdating } = useMutation({
+  const { mutate: updateEmployee, isPending: employeeUpdating } = useMutation({
     mutationFn: ({ employee, id }) => createUpdateEmployee(employee, id),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -15,7 +15,7 @@ export function useUpdateEmployee() {
   });
 
   return {
-    employeeUpdating,
     updateEmployee,
+    employeeUpdating,
   };
 }
