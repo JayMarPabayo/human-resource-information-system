@@ -4,7 +4,7 @@ export async function getEmployees({ searchKey = "" }) {
   const searchPattern = `%${searchKey}%`;
   let { data, error } = await supabase
     .from("employees")
-    .select(`*, departments(*), children(*)`)
+    .select(`*, departments(*), children(*), educations(*)`)
     .order("employeeFirstName", { ascending: true })
     .or(
       `employeeFirstName.ilike.${searchPattern},employeeMiddleName.ilike.${searchPattern},employeeLastName.ilike.${searchPattern},employeeDesignation.ilike.${searchPattern}`
@@ -19,7 +19,7 @@ export async function getEmployees({ searchKey = "" }) {
 }
 
 export async function createUpdateEmployee(employee, id) {
-  const { children, ...employeeWithoutChildren } = employee;
+  const { children, educations, ...employeeWithoutChildren } = employee;
   const employeesWithNull = convertEmptyStringsToNull(employeeWithoutChildren);
   let query = supabase.from("employees");
 
@@ -31,12 +31,14 @@ export async function createUpdateEmployee(employee, id) {
     query = query.update(employeesWithNull).eq("id", id);
   }
 
-  console.log(children);
+  console.log(educations);
+
   const { data, error } = await query.select();
   // -- Children
   const eid = data[0].id;
   if (eid) {
     await deleteChildren(eid);
+    await deleteEducations(eid);
   }
 
   if (children && Array.isArray(children)) {
@@ -57,6 +59,25 @@ export async function createUpdateEmployee(employee, id) {
       if (childError) {
         console.error(childError);
         throw new Error("Inserting child record failed");
+      }
+    }
+  }
+
+  if (educations && Array.isArray(educations)) {
+    for (const education of educations) {
+      const educationData = {
+        educationStudent: eid,
+        ...education,
+      };
+
+      // Insert the educationData data into the "educations" table
+      const { error: educationError } = await supabase
+        .from("educations")
+        .insert([educationData]);
+
+      if (educationError) {
+        console.error(educationError);
+        throw new Error("Inserting education record failed");
       }
     }
   }
@@ -106,6 +127,20 @@ export async function deleteChildren(id) {
   if (error) {
     console.error(error);
     throw new error("deleting children record failed");
+  }
+
+  return data;
+}
+
+export async function deleteEducations(id) {
+  const { data, error } = await supabase
+    .from("educations")
+    .delete()
+    .eq("educationStudent", id);
+
+  if (error) {
+    console.error(error);
+    throw new error("deleting education record failed");
   }
 
   return data;

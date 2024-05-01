@@ -24,6 +24,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
   const { employeeCreating, createEmployee } = useCreateEmployee();
   const { employeeUpdating, updateEmployee } = useUpdateEmployee();
   const [childrenList, setChildrenList] = useState([]);
+  const [educationList, setEducationList] = useState([]);
 
   const [activeTab, setActiveTab] = useState(0);
 
@@ -69,13 +70,23 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
 
   useEffect(() => {
     if (isEditSession) {
-      const newChildrenList = editValues.children.map((e, index) => ({
+      const newChildrenList = editValues.children?.map((e, index) => ({
         key: `child-${index}`,
         ...e,
       }));
-      setChildrenList(newChildrenList); // This will only run once when `editID` or `editValues` change
+      setChildrenList(newChildrenList);
     }
-  }, [isEditSession, editValues.children]); // Define dependencies to avoid unnecessary re-renders
+  }, [isEditSession, editValues.children]);
+
+  useEffect(() => {
+    if (isEditSession) {
+      const newEducationsList = editValues.educations?.map((e, index) => ({
+        key: `education-${index}`,
+        ...e,
+      }));
+      setEducationList(newEducationsList);
+    }
+  }, [isEditSession, editValues.educations]);
 
   // -- form Hook
   const { register, unregister, handleSubmit, reset, formState } = useForm({
@@ -119,8 +130,8 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
   // -- children function
   const addChild = () => {
     setChildrenList((prevList) => [
-      ...prevList,
-      { key: `child-${prevList.length}` },
+      ...(prevList || []),
+      { key: `child-${prevList?.length}` },
     ]);
   };
 
@@ -130,13 +141,29 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
     );
   };
 
+  // -- education function
+  const addEducation = () => {
+    setEducationList((prevList) => [
+      ...(prevList || []),
+      { key: `education-${prevList?.length}` },
+    ]);
+  };
+
+  const removeEducation = (key) => {
+    setEducationList((prevList) =>
+      prevList.filter((education) => education.key !== key)
+    );
+  };
+
   return (
     <>
       {isLoading && <BigSpinner />}
 
       <form onSubmit={handleSubmit(onSubmit, onError)}>
         <section className="flex items-center justify-between">
-          <h6 className="text-xl font-semibold text-slate-800">New Employee</h6>
+          <h6 className="text-xl font-semibold text-slate-800">
+            {isEditSession ? "Update" : "New"} Employee
+          </h6>
           <div className="flex gap-x-2 items-center">
             <BiSolidGroup className="text-lg text-slate-700" />
             <h6 className="text-base font-medium text-slate-500">
@@ -746,7 +773,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
             </button>
           </div>
           <div className="mt-1 px-2 w-full mb-4">
-            {childrenList.map((child, index) => (
+            {childrenList?.map((child, index) => (
               <div
                 key={child.key}
                 className="grid grid-cols-7 items-center gap-x-2 pt-2"
@@ -808,9 +835,144 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
   function EducationalBackgroundTab() {
     return (
       <section className="mt-3 h-[30rem] overflow-y-scroll overflow-x-hidden">
-        <h3 className="text-xl font-light tracking-wider text-gray-500">
-          Educational Background
-        </h3>
+        <div className="flex text-xl items-center gap-x-4">
+          <h3 className="font-light tracking-wider text-gray-500">
+            Academic History
+          </h3>
+          <button
+            title="Add New Children"
+            className="cursor-pointer px-2 py-1 bg-slate-700 text-white flex items-center gap-x-2 border border-slate-600 rounded-md hover:scale-110 active:scale-95 transition-all duration-300"
+            onClick={addEducation}
+          >
+            <FaCirclePlus className="" />
+            <span className="text-xs font-medium">Add</span>
+          </button>
+        </div>
+        <div className="mt-3 px-2 w-full flex flex-col gap-y-5">
+          {educationList?.map((educations, index) => (
+            <div key={educations.key} className="bg-slate-200 p-2 rounded-md">
+              <div className="grid grid-cols-12 gap-x-2 items-center">
+                <SelectInput
+                  textSize="text-xs"
+                  width="col-span-3"
+                  label="School Level"
+                  {...register(`educations.${index}.educationLevel`)}
+                  options={[
+                    { label: "Elementary", value: "Elementary" },
+                    { label: "Secondary", value: "Secondary" },
+                    { label: "Vocational/Trade", value: "Vocational/Trade" },
+                    { label: "College", value: "College" },
+                    { label: "Graduate Studies", value: "Graduate Studies" },
+                  ]}
+                />
+                <TextInput
+                  type="text"
+                  textSize="text-xs"
+                  width="col-span-4"
+                  label="Name of School"
+                  placeholder="Write in Full"
+                  errorState={
+                    errors?.educations?.[index]?.educationSchoolName?.message
+                  }
+                  {...register(`educations.${index}.educationSchoolName`, {
+                    required: "This field is required",
+                  })}
+                />
+                <TextInput
+                  type="text"
+                  textSize="text-xs"
+                  width="col-span-4"
+                  label="Basic Education/Degree/Course"
+                  placeholder="Write in Full"
+                  errorState={
+                    errors?.educations?.[index]?.educationDegreeCourse?.message
+                  }
+                  {...register(`educations.${index}.educationDegreeCourse`, {
+                    required: "This field is required",
+                  })}
+                />
+                <div className="col-span-1 self-start text-2xl flex justify-end pt-1 pe-1 gap-x-3 text-slate-700">
+                  <button
+                    title="Remove Education Info"
+                    onClick={() => {
+                      unregister(`educations.${index}`);
+                      removeEducation(educations.key);
+                    }}
+                  >
+                    <FaTrash className="cursor-pointer hover:scale-125 active:scale-95 hover:text-slate-600 transition-all duration-300" />
+                  </button>
+                </div>
+              </div>
+              <div className="grid grid-cols-12 gap-x-2 items-center">
+                <TextInput
+                  type="number"
+                  textSize="text-xs"
+                  width="col-span-1"
+                  label="From"
+                  placeholder="YYYY"
+                  min="1900"
+                  max="2100"
+                  step="1"
+                  errorState={
+                    errors?.educations?.[index]?.educationAttendFrom?.message
+                  }
+                  {...register(`educations.${index}.educationAttendFrom`)}
+                />
+                <TextInput
+                  type="number"
+                  textSize="text-xs"
+                  width="col-span-1"
+                  label="To"
+                  placeholder="YYYY"
+                  min="1900"
+                  max="2100"
+                  step="1"
+                  errorState={
+                    errors?.educations?.[index]?.educationAttendTo?.message
+                  }
+                  {...register(`educations.${index}.educationAttendTo`)}
+                />
+                <TextInput
+                  type="text"
+                  textSize="text-xs"
+                  width="col-span-3"
+                  label="Highest Level/Units Earned"
+                  placeholder="Leave blank if not graduated"
+                  errorState={
+                    errors?.educations?.[index]?.educationLevelEarned?.message
+                  }
+                  {...register(`educations.${index}.educationLevelEarned`)}
+                />
+                <TextInput
+                  type="number"
+                  textSize="text-xs"
+                  width="col-span-2"
+                  label="Year Graduated"
+                  placeholder="YYYY"
+                  min="1900"
+                  max="2100"
+                  step="1"
+                  errorState={
+                    errors?.educations?.[index]?.educationYearGraduated?.message
+                  }
+                  {...register(`educations.${index}.educationYearGraduated`)}
+                />
+                <TextInput
+                  type="text"
+                  textSize="text-xs"
+                  width="col-span-5"
+                  label="Scholarships/Academic Honors Received"
+                  placeholder="Input here"
+                  errorState={
+                    errors?.educations?.[index]?.educationHonorsReceived
+                      ?.message
+                  }
+                  {...register(`educations.${index}.educationHonorsReceived`)}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
     );
   }
