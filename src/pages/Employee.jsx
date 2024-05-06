@@ -19,9 +19,22 @@ const Employee = () => {
   const { isDeleting, deleteEmployee } = useDeleteEmployee();
 
   const { isLoading, data } = useQuery({
-    queryKey: ["employees", searchKey],
-    queryFn: () => getEmployees({ searchKey: searchKey }),
+    queryKey: ["employees"],
+    queryFn: () => getEmployees(),
   });
+
+  let filteredData = searchKey
+    ? data.filter((employee) => {
+        const fullName =
+          `${employee.employeeFirstName} ${employee.employeeLastName} ${employee.employeeMiddleName} ${employee.employeeDesignation} ${employee.departments.departmentName}`.toLowerCase();
+        return fullName.includes(searchKey.toLowerCase());
+      })
+    : data;
+
+  // const { isLoading, data } = useQuery({
+  //   queryKey: ["employees", searchKey],
+  //   queryFn: () => getEmployees({ searchKey: searchKey }),
+  // });
 
   return (
     <>
@@ -57,7 +70,8 @@ const Employee = () => {
                   <div className="py-2 text-center col-span-1">Action</div>
                 </section>
                 <section className="w-full text-xs font-normal tracking-wide">
-                  {data?.map((employee, index) => {
+                  {filteredData?.map((employee, index) => {
+                    console.log(employee);
                     return (
                       <TableRow
                         key={index}

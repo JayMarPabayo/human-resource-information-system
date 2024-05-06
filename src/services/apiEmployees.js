@@ -1,16 +1,12 @@
 import supabase from "./supabase";
 
-export async function getEmployees({ searchKey = "" }) {
-  const searchPattern = `%${searchKey}%`;
+export async function getEmployees() {
   let { data, error } = await supabase
     .from("employees")
     .select(
       `*, departments(*), children(*), educations(*), eligibilities(*), workExperiences(*)`
     )
-    .order("employeeFirstName", { ascending: true })
-    .or(
-      `employeeFirstName.ilike.${searchPattern},employeeMiddleName.ilike.${searchPattern},employeeLastName.ilike.${searchPattern},employeeDesignation.ilike.${searchPattern}`
-    );
+    .order("employeeFirstName", { ascending: true });
 
   if (error) {
     console.error(error);
@@ -19,6 +15,26 @@ export async function getEmployees({ searchKey = "" }) {
 
   return data;
 }
+
+// export async function getEmployees({ searchKey = "" }) {
+//   const searchPattern = `${searchKey}`;
+//   let { data, error } = await supabase
+//     .from("employees")
+//     .select(
+//       `*, departments(*), children(*), educations(*), eligibilities(*), workExperiences(*)`
+//     )
+//     .order("employeeFirstName", { ascending: true })
+//     .or(
+//       `employeeFirstName.ilike.*${searchPattern}*,employeeMiddleName.ilike.*${searchPattern}*,employeeLastName.ilike.*${searchPattern}*,employeeDesignation.ilike.*${searchPattern}*`
+//     );
+
+//   if (error) {
+//     console.error(error);
+//     throw new error("fetching employees records failed");
+//   }
+
+//   return data;
+// }
 
 export async function createUpdateEmployee(employee, id) {
   const {
