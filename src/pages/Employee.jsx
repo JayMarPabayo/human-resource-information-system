@@ -24,17 +24,12 @@ const Employee = () => {
   });
 
   let filteredData = searchKey
-    ? data.filter((employee) => {
+    ? data?.filter((employee) => {
         const fullName =
           `${employee.employeeFirstName} ${employee.employeeLastName} ${employee.employeeMiddleName} ${employee.employeeDesignation} ${employee.departments.departmentName}`.toLowerCase();
         return fullName.includes(searchKey.toLowerCase());
       })
     : data;
-
-  // const { isLoading, data } = useQuery({
-  //   queryKey: ["employees", searchKey],
-  //   queryFn: () => getEmployees({ searchKey: searchKey }),
-  // });
 
   return (
     <>
@@ -56,8 +51,8 @@ const Employee = () => {
           <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
             <div className="overflow-hidden">
               <div className="min-w-full text-left text-sm">
-                <section className="grid grid-cols-9 border-b bg-slate-300 border-neutral-300 text-xs text-gray-700">
-                  <div className="py-2 px-2 col-span-1">#</div>
+                <section className="grid grid-cols-9 bg-slate-300 text-xs text-slate-600 border border-slate-600 border-opacity-10 shadow-sm">
+                  <div className="py-2 px-2 col-span-1">ID</div>
                   <div className="py-2 col-span-2">
                     <span>Name</span>
                     <span className="ms-2 text-xs italic text-gray-500 font-normal">
@@ -71,7 +66,6 @@ const Employee = () => {
                 </section>
                 <section className="w-full text-xs font-normal tracking-wide">
                   {filteredData?.map((employee, index) => {
-                    console.log(employee);
                     return (
                       <TableRow
                         key={index}

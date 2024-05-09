@@ -9,7 +9,7 @@ const Modal = ({ open, children, size }) => {
       {open && (
         <div
           onClick={(e) => e.stopPropagation()}
-          className={`${size} bg-white rounded-xl shadow p-6 transition-all ${
+          className={`${size} bg-white rounded-xl shadow p-6 transition-all${
             open ? "scale-100 opacity-100" : "scale-125 opacity-0"
           }`}
         >

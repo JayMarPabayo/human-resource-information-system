@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media print {
+  @page {
+    size: 216mm 356mm;
+    margin-inline: 2rem;
+  }
+}

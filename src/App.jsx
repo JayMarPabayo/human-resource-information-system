@@ -6,6 +6,7 @@ import AppLayout from "./utils/AppLayout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Employee from "./pages/Employee";
+import Report from "./pages/Report";
 import Administration from "./pages/Administration";
 import PageNotFound from "./pages/PageNotFound";
 
@@ -28,6 +29,7 @@ const App = () => {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="administration" element={<Administration />} />
             <Route path="employee" element={<Employee />} />
+            <Route path="reports" element={<Report />} />
           </Route>
           <Route path="login" element={<Login />} />
           <Route path="*" element={<PageNotFound />} />

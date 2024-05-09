@@ -1,4 +1,4 @@
-import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import { FcReading, FcEmptyTrash, FcSynchronize } from "react-icons/fc";
 import { IoMdFemale, IoMdMale } from "react-icons/io";
 import { useState } from "react";
 
@@ -18,11 +18,11 @@ const TableRow = ({
   return (
     <>
       <div
-        key={employee.id}
+        key={index}
         className="w-full grid grid-cols-9 border-b border-neutral-300 text-slate-600 font-medium hover:bg-slate-100 whitespace-nowrap transition-all duration-300"
       >
         <div className="col-span-1 py-2 px-2 flex gap-x-2 items-center font-bold">
-          {++index}{" "}
+          {employee.id}{" "}
           {employee.employeeGender == "Male" ? (
             <IoMdMale className="text-lg font-extrabold text-green-900" />
           ) : (
@@ -30,7 +30,7 @@ const TableRow = ({
           )}
         </div>
         <div className="col-span-2 py-2">
-          {`${employee.employeeFirstName} ${employee.employeeLastName} ${
+          {`${employee.employeeLastName} ${employee.employeeFirstName} ${
             employee.extension_name || ""
           } ${
             employee.employeeMiddleName
@@ -49,35 +49,35 @@ const TableRow = ({
             ? employee.employeeEmail
             : employee.employeeMobile
             ? employee.employeeMobile
-            : ""}
+            : "N/A"}
         </div>
-        <div className="col-span-1 flex justify-between align-middle px-1 gap-x-1 py-2">
+        <div className="col-span-1 flex justify-between align-middle px-1 gap-x-1 py-2 text-base">
           <button
             type="button"
             title="View"
-            className="text-white w-full bg-slate-700 py-1 px-2 rounded-md hover:bg-slate-600 hover:scale-110 transition-all duration-300"
+            className="text-slate-700 border border-slate-600 border-opacity-20 shadow-md w-full bg-slate-300 py-1 px-2 rounded-md hover:bg-slate-200 hover:scale-110 transition-all duration-300"
             onClick={() => setShowViewForm((bol) => !bol)}
           >
-            <FaEye className="mx-auto" />
+            <FcReading className="mx-auto" />
           </button>
           <button
             type="button"
             title="Edit"
-            className="text-white w-full bg-slate-700 py-1 px-2 rounded-md hover:bg-slate-600 hover:scale-110 transition-all duration-300"
+            className="text-slate-700 border border-slate-600 border-opacity-20 shadow-md w-full bg-slate-300 py-1 px-2 rounded-md hover:bg-slate-200 hover:scale-110 transition-all duration-300"
             onClick={() => setShowUpdateForm((bol) => !bol)}
           >
-            <FaEdit className="mx-auto" />
+            <FcSynchronize className="mx-auto" />
           </button>
           <button
             type="button"
             title="Delete"
-            className="text-white w-full bg-slate-700 py-1 px-2 rounded-md hover:bg-slate-600 hover:scale-110 transition-all duration-300"
+            className="text-slate-700 border border-slate-600 border-opacity-20 shadow-md w-full bg-slate-300 py-1 px-2 rounded-md hover:bg-slate-200 hover:scale-110 transition-all duration-300"
             onClick={() => {
               setSelectedEmployee(employee.id);
               setOpenConfirmModal(true);
             }}
           >
-            <FaTrash className="mx-auto" />
+            <FcEmptyTrash className="mx-auto" />
           </button>
         </div>
       </div>

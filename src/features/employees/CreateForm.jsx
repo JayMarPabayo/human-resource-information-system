@@ -977,7 +977,7 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
                   textSize="text-xs"
                   width="col-span-3"
                   label="Highest Level/Units Earned"
-                  placeholder="Leave blank if not graduated"
+                  placeholder="Level or Units"
                   errorState={
                     errors?.educations?.[index]?.educationLevelEarned?.message
                   }

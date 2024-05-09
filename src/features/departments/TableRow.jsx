@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { FaTrash, FaPen } from "react-icons/fa6";
+import { FcEmptyTrash, FcSynchronize } from "react-icons/fc";
 
 import PropTypes from "prop-types";
 import Modal from "../../utils/Modal";
@@ -26,7 +26,7 @@ const TableRow = ({
                 setShowUpdateModal(true);
               }}
             >
-              <FaPen className="cursor-pointer hover:scale-125 active:scale-95 hover:text-green-700 transition-all duration-300" />
+              <FcSynchronize className="text-base cursor-pointer hover:scale-125 active:scale-95 hover:text-green-700 transition-all duration-300" />
             </button>
             <button
               onClick={() => {
@@ -34,7 +34,7 @@ const TableRow = ({
                 setOpenConfirmModal(true);
               }}
             >
-              <FaTrash className="cursor-pointer hover:scale-125 active:scale-95 hover:text-green-700 transition-all duration-300" />
+              <FcEmptyTrash className="text-base cursor-pointer hover:scale-125 active:scale-95 hover:text-green-700 transition-all duration-300" />
             </button>
           </div>
         </div>

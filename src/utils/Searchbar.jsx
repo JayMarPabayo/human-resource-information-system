@@ -5,7 +5,7 @@ const SearchBar = ({ ...props }) => {
     <div className="relative w-2/5">
       <input
         type="search"
-        className="text-xs w-full py-2 pl-10 pr-4 leading-tight focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg"
+        className="text-xs w-full py-2 pl-10 pr-4 leading-tight focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg focus:border-indigo-300 focus:outline-indigo-300 focus:outline-2"
         placeholder="Search..."
         {...props}
       />
