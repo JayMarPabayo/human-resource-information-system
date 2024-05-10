@@ -81,76 +81,77 @@ const Report = () => {
           onClick={() => setShowEmployeesPrint(true)}
         >
           <FcPrint className="text-lg" />
-          <span className="text-xs">Print Table</span>
+          <span className="text-xs font-medium">Print Table</span>
         </button>
       </section>
-      <div className="flex flex-col h-full">
-        <div className="overflow-x-auto sm:-mx-6 lg:-mx-8 h-full">
-          <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8  h-full">
-            <div className="overflow-hidden h-[90%]">
-              <div className="min-w-full text-left text-sm">
-                <section className="grid grid-cols-9 bg-slate-300 text-xs text-slate-600 border border-slate-600 border-opacity-10 shadow-sm">
-                  <div className="py-2 px-2 col-span-1">ID</div>
-                  <div className="py-2 col-span-2">
-                    <span>Name</span>
-                    <span className="ms-2 text-xs italic text-gray-500 font-normal">
-                      Last Name, First Name, M.I.
-                    </span>
-                  </div>
-                  {/* Department Header */}
+      <div className="inline-block min-w-full py-2 h-full">
+        <div className="overflow-hidden h-full">
+          <table className="w-full border border-slate-600 border-opacity-10 shadow-sm text-xs">
+            <thead className="text-left">
+              <tr className="bg-slate-300 text-slate-600 py-2">
+                <th className="py-2 px-2">ID</th>
+                <th colSpan={2} className="py-2 px-1">
+                  <span>Name</span>
+                  <span className="ms-2 text-xs italic text-gray-500 font-normal">
+                    Last Name, First Name, M.I.
+                  </span>
+                </th>
+                {/* Department Header */}
+                <th
+                  className="py-2 px-1 relative cursor-pointer flex justify-between items-center hover:bg-slate-200 hover:rounded-sm duration-300"
+                  onClick={toggleDepartmentDropdown}
+                >
+                  <span>{selectedDepartment || "Department"}</span>
+                  <TiArrowSortedDown className="text-lg" />
                   <div
-                    className="py-2 col-span-2 relative  cursor-pointer flex justify-between items-center ps-1 pe-5 hover:bg-slate-200 hover:rounded-sm duration-300"
-                    onClick={toggleDepartmentDropdown}
+                    className={`absolute top-full w-full ${
+                      departmentDropdown ? "" : "hidden"
+                    }`}
                   >
-                    <span>{selectedDepartment || "Department"}</span>
-                    <TiArrowSortedDown className="text-lg" />
-                    <div
-                      className={`absolute top-full w-full ${
-                        departmentDropdown ? "" : "hidden"
-                      }`}
-                    >
-                      <ul className="bg-slate-200 border border-slate-300 shadow-md py-2 -ms-1 font-medium">
-                        <li
-                          className="cursor-pointer hover:bg-slate-100 px-2 py-1 duration-300"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            setSelectedDesignation("");
-                            setDesignationDropdown(false);
-                            setSelectedDepartment("");
-                            setDepartmentDropdown(false);
-                          }}
-                        >
-                          All
-                        </li>
-                        {departments?.map((department, index) => {
-                          return (
-                            <li
-                              key={index}
-                              className="cursor-pointer hover:bg-slate-100 px-2 py-1 duration-300"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                setSelectedDepartment(department);
-                                setDepartmentDropdown(false);
-                              }}
-                            >
-                              {department}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
+                    <ul className="bg-slate-200 border border-slate-300 shadow-md py-2 -ms-1 font-medium">
+                      <li
+                        className="cursor-pointer hover:bg-slate-100 px-2 py-1 duration-300"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setSelectedDesignation("");
+                          setDesignationDropdown(false);
+                          setSelectedDepartment("");
+                          setDepartmentDropdown(false);
+                        }}
+                      >
+                        All
+                      </li>
+                      {departments?.map((department, index) => {
+                        return (
+                          <li
+                            key={index}
+                            className="cursor-pointer hover:bg-slate-100 px-2 py-1 duration-300"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setSelectedDepartment(department);
+                              setDepartmentDropdown(false);
+                            }}
+                          >
+                            {department}
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </div>
-                  {/* Designation Header */}
+                </th>
+                {/* Designation Header */}
+                <th
+                  onClick={() => {
+                    if (selectedDepartment) {
+                      toggleDesignationDropdown();
+                    }
+                  }}
+                >
                   <div
-                    className={`py-2 col-span-1 relative flex justify-between items-center ps-1 pe-5 duration-300 ${
+                    className={`py-2 px-1 col-span-1 relative flex justify-between items-center duration-300 ${
                       selectedDepartment &&
                       "hover:bg-slate-200 hover:rounded-sm cursor-pointer"
                     }`}
-                    onClick={() => {
-                      if (selectedDepartment) {
-                        toggleDesignationDropdown();
-                      }
-                    }}
                   >
                     <span>{selectedDesignation || "Designation"}</span>
                     {selectedDepartment && (
@@ -190,20 +191,20 @@ const Report = () => {
                       </ul>
                     </div>
                   </div>
-                  <div className="py-2 col-span-2">Contact Details</div>
-                  <div className="py-2 text-center col-span-1">Export</div>
-                </section>
-                <section className="w-full text-xs font-normal tracking-wide">
-                  {filteredData?.map((employee, index) => {
-                    return (
-                      <TableRow key={index} employee={employee} index={index} />
-                    );
-                  })}
-                </section>
-              </div>
-              {isLoading && <Spinner />}
-            </div>
-          </div>
+                </th>
+                <th className="py-2 px-1 ">Contact Details</th>
+                <th className="py-2 px-1 text-center">Export</th>
+              </tr>
+            </thead>
+            <tbody className="w-full text-xs font-normal tracking-wide">
+              {filteredData?.map((employee, index) => {
+                return (
+                  <TableRow key={index} employee={employee} index={index} />
+                );
+              })}
+            </tbody>
+          </table>
+          {isLoading && <Spinner />}
         </div>
       </div>
 

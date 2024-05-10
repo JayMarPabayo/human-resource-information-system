@@ -29,7 +29,7 @@ const Departments = () => {
         <div className="flex justify-between items-center">
           <h6 className="font-medium text-base">Departments</h6>
           <button
-            className="text-xl hover:text-slate-600 hover:scale-110 active:scale-95 duration-300"
+            className="text-xl hover:text-slate-600 hover:scale-125 active:scale-95 duration-300"
             onClick={() => {
               setSetShowAddModal((bol) => !bol);
             }}
