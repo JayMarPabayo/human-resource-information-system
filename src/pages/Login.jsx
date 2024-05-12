@@ -1,9 +1,14 @@
 import { useState } from "react";
-import { FaUser, FaLock } from "react-icons/fa";
+
+import LoginForm from "../features/authentication/LoginForm";
+import SignupForm from "../features/authentication/SignupForm";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [showLoginForm, setShowLoginForm] = useState(true);
+
+  const toggleForm = () => {
+    setShowLoginForm(!showLoginForm);
+  };
 
   return (
     <div className="bg-gradient-to-bl from-slate-400 to-slate-600 h-screen w-full flex justify-center items-center gap-x-10">
@@ -25,42 +30,11 @@ const Login = () => {
           eveniet error dolores fugit est quam qui sapiente vitae.
         </p>
       </div>
-      <form className="w-[30rem] h-3/5 p-8 bg-white bg-opacity-30 rounded-md shadow-md flex flex-col gap-y-7 py-10">
-        <h6 className="text-center text-2xl font-semibold text-slate-800">
-          Member Log in
-        </h6>
-        <div className="relative">
-          <input
-            type="text"
-            className="w-full py-2 pl-10 pr-4 leading-tight focus:outline-none focus:shadow-outline border border-gray-300 rounded-md"
-            placeholder="Enter Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <FaUser className="text-gray-500" />
-          </div>
-        </div>
-        <div className="relative">
-          <input
-            type="password"
-            className="w-full py-2 pl-10 pr-4 leading-tight focus:outline-none focus:shadow-outline border border-gray-300 rounded-md"
-            placeholder="Enter Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <FaLock className="text-gray-500" />
-          </div>
-        </div>
-        <button
-          type="button"
-          className="mt-auto w-full text-white bg-slate-800 py-3 rounded-md font-semibold hover:bg-slate-600 transition-all duration-300"
-          onClick={() => {}}
-        >
-          Log in
-        </button>
-      </form>
+      {showLoginForm ? (
+        <LoginForm toggle={toggleForm} />
+      ) : (
+        <SignupForm toggle={toggleForm} />
+      )}
     </div>
   );
 };

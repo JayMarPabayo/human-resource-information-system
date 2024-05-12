@@ -4,7 +4,11 @@ import { useState } from "react";
 import { getEmployees } from "../services/apiEmployees";
 
 import { TiArrowSortedDown } from "react-icons/ti";
-import { FcPrint } from "react-icons/fc";
+import {
+  FcPrint,
+  FcAlphabeticalSortingAz,
+  FcAlphabeticalSortingZa,
+} from "react-icons/fc";
 
 import Searchbar from "../utils/Searchbar";
 import Spinner from "../utils/Spinner";
@@ -14,6 +18,7 @@ import Employees from "../features/reports/Employees.jsx";
 
 const Report = () => {
   const [searchKey, setSearchKey] = useState("");
+  const [sortBy, setSortBy] = useState("asc");
 
   const [showEmployeesPrint, setShowEmployeesPrint] = useState(false);
 
@@ -54,7 +59,7 @@ const Report = () => {
           );
         })
       : data;
-
+  filteredData = sortByFullName(filteredData, sortBy);
   const designations = [
     ...new Set(
       data
@@ -90,11 +95,32 @@ const Report = () => {
             <thead className="text-left">
               <tr className="bg-slate-300 text-slate-600 py-2">
                 <th className="py-2 px-2">ID</th>
-                <th colSpan={2} className="py-2 px-1">
-                  <span>Name</span>
-                  <span className="ms-2 text-xs italic text-gray-500 font-normal">
-                    Last Name, First Name, M.I.
-                  </span>
+                <th
+                  colSpan={2}
+                  className="p-0"
+                  onClick={() =>
+                    setSortBy((curr) => {
+                      if (curr === "asc") {
+                        return "desc";
+                      } else {
+                        return "asc";
+                      }
+                    })
+                  }
+                >
+                  <div className="py-2 px-1 flex items-center justify-start gap-3 cursor-pointer hover:bg-slate-200 hover:rounded-sm duration-300">
+                    <span>Name</span>
+                    <span className="ms-2 text-xs italic text-gray-500 font-normal">
+                      Last Name, First Name, M.I.
+                    </span>
+                    <span className="mx-auto">
+                      {sortBy === "asc" ? (
+                        <FcAlphabeticalSortingAz className="text-base" />
+                      ) : (
+                        <FcAlphabeticalSortingZa className="text-base" />
+                      )}
+                    </span>
+                  </div>
                 </th>
                 {/* Department Header */}
                 <th
@@ -148,7 +174,7 @@ const Report = () => {
                   }}
                 >
                   <div
-                    className={`py-2 px-1 col-span-1 relative flex justify-between items-center duration-300 ${
+                    className={`py-2 px-1 relative flex justify-between items-center duration-300 ${
                       selectedDepartment &&
                       "hover:bg-slate-200 hover:rounded-sm cursor-pointer"
                     }`}
@@ -219,5 +245,24 @@ const Report = () => {
     </>
   );
 };
+
+function sortByFullName(data, order = "asc") {
+  const compareFullName = (a, b) => {
+    const fullNameA =
+      `${a.employeeFirstName} ${a.employeeMiddleName} ${a.employeeLastName}`.toLowerCase();
+    const fullNameB =
+      `${b.employeeFirstName} ${b.employeeMiddleName} ${b.employeeLastName}`.toLowerCase();
+
+    if (fullNameA < fullNameB) {
+      return order === "asc" ? -1 : 1;
+    } else if (fullNameA > fullNameB) {
+      return order === "asc" ? 1 : -1;
+    } else {
+      return 0;
+    }
+  };
+
+  return data?.slice().sort(compareFullName);
+}
 
 export default Report;

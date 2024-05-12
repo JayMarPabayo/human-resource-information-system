@@ -3,6 +3,10 @@ import { getEmployees } from "../services/apiEmployees";
 import { useState } from "react";
 
 import { FcPlus } from "react-icons/fc";
+import {
+  FcAlphabeticalSortingAz,
+  FcAlphabeticalSortingZa,
+} from "react-icons/fc";
 
 import { useDeleteEmployee } from "../features/employees/useDeleteEmployee";
 
@@ -17,6 +21,7 @@ const Employee = () => {
   const [openCreateFormModal, setOpenCreateFormModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [searchKey, setSearchKey] = useState("");
+  const [sortBy, setSortBy] = useState("asc");
 
   const { isDeleting, deleteEmployee } = useDeleteEmployee();
 
@@ -33,6 +38,7 @@ const Employee = () => {
       })
     : data;
 
+  filteredData = sortByFullName(filteredData, sortBy);
   return (
     <>
       <section className="flex justify-between items-center">
@@ -57,11 +63,32 @@ const Employee = () => {
             <thead className="text-left">
               <tr className="bg-slate-300 text-slate-600 py-2">
                 <th className="py-2 px-2">ID</th>
-                <th colSpan={2} className="py-2 px-1">
-                  <span>Name</span>
-                  <span className="ms-2 text-xs italic text-gray-500 font-normal">
-                    Last Name, First Name, M.I.
-                  </span>
+                <th
+                  colSpan={2}
+                  className="p-0"
+                  onClick={() =>
+                    setSortBy((curr) => {
+                      if (curr === "asc") {
+                        return "desc";
+                      } else {
+                        return "asc";
+                      }
+                    })
+                  }
+                >
+                  <div className="py-2 px-1 flex items-center justify-start gap-3 cursor-pointer hover:bg-slate-200 hover:rounded-sm duration-300">
+                    <span>Name</span>
+                    <span className="ms-2 text-xs italic text-gray-500 font-normal">
+                      Last Name, First Name, M.I.
+                    </span>
+                    <span className="mx-auto">
+                      {sortBy === "asc" ? (
+                        <FcAlphabeticalSortingAz className="text-base" />
+                      ) : (
+                        <FcAlphabeticalSortingZa className="text-base" />
+                      )}
+                    </span>
+                  </div>
                 </th>
                 <th className="py-2 px-1">Department</th>
                 <th className="py-2 px-1">Designation</th>
@@ -131,5 +158,24 @@ const Employee = () => {
     </>
   );
 };
+
+function sortByFullName(data, order = "asc") {
+  const compareFullName = (a, b) => {
+    const fullNameA =
+      `${a.employeeFirstName} ${a.employeeMiddleName} ${a.employeeLastName}`.toLowerCase();
+    const fullNameB =
+      `${b.employeeFirstName} ${b.employeeMiddleName} ${b.employeeLastName}`.toLowerCase();
+
+    if (fullNameA < fullNameB) {
+      return order === "asc" ? -1 : 1;
+    } else if (fullNameA > fullNameB) {
+      return order === "asc" ? 1 : -1;
+    } else {
+      return 0;
+    }
+  };
+
+  return data?.slice().sort(compareFullName);
+}
 
 export default Employee;

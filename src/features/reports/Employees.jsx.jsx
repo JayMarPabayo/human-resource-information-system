@@ -72,7 +72,7 @@ const Employees = ({
           </div>
           <table className="table-auto w-full text-sm text-left text-gray-600 mt-5">
             <thead
-              className="text-gray-700 uppercase bg-gray-100"
+              className="text-gray-700 uppercase bg-slate-200"
               style={{
                 fontSize: "0.65rem",
               }}

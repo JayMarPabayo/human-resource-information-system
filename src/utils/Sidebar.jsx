@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
-import { IoPeople, IoSettings } from "react-icons/io5";
+import { IoSettings } from "react-icons/io5";
 import { FaTable, FaLayerGroup } from "react-icons/fa";
+import { FaPeopleRoof } from "react-icons/fa6";
 
 const Sidebar = () => {
   const linkStyles = `flex gap-x-3 items-center align-middle py-2 px-4 text-slate-500 hover:bg-slate-200 hover:text-gray-700 transition-all duration-500`;
@@ -22,7 +23,7 @@ const Sidebar = () => {
             to="/employee"
             className={({ isActive }) => (isActive ? linkACtive : linkStyles)}
           >
-            <IoPeople />
+            <FaPeopleRoof />
             <span>Employee</span>
           </NavLink>
         </li>
@@ -35,6 +36,15 @@ const Sidebar = () => {
             <span>Reports</span>
           </NavLink>
         </li>
+        {/* <li>
+          <NavLink
+            to="/users"
+            className={({ isActive }) => (isActive ? linkACtive : linkStyles)}
+          >
+            <IoPeople />
+            <span>Users</span>
+          </NavLink>
+        </li> */}
         <li>
           <NavLink
             to="/administration"

@@ -1,7 +1,8 @@
 import { useState } from "react";
 
 import { IoMdFemale, IoMdMale } from "react-icons/io";
-import { FcPrint } from "react-icons/fc";
+import { FcPrint, FcPhone } from "react-icons/fc";
+import { MdEmail } from "react-icons/md";
 
 import PropTypes from "prop-types";
 
@@ -41,17 +42,28 @@ const TableRow = ({ employee, index }) => {
         <td className="p-1">{employee.employeeDesignation || "N/A"}</td>
 
         <td className="p-1">
-          {employee.employeeEmail
-            ? employee.employeeEmail
-            : employee.employeeMobile
-            ? employee.employeeMobile
-            : "N/A"}
+          <div className="flex items-center justify-start gap-3">
+            {employee.employeeEmail ? (
+              <MdEmail className="text-lg" />
+            ) : <FcPhone className="text-lg" /> ? (
+              <FcPhone className="text-lg" />
+            ) : (
+              ""
+            )}
+            <span>
+              {employee.employeeEmail
+                ? employee.employeeEmail
+                : employee.employeeMobile
+                ? employee.employeeMobile
+                : "N/A"}
+            </span>
+          </div>
         </td>
-        <td className="flex justify-between align-middle text-base p-1 gap-2">
+        <td className="flex justify-center items-center text-base p-1">
           <button
             type="button"
             title="Print Single Data Sheet"
-            className="flex items-center justify-center gap-x-2 text-slate-700 border border-slate-600 border-opacity-20 shadow-md w-fit bg-slate-300 py-1 px-4 rounded-md hover:bg-slate-200 hover:scale-110 transition-all duration-300 active:scale-95"
+            className="flex items-center justify-center text-slate-700 border border-slate-600 border-opacity-20 shadow-md w-fit bg-slate-300 py-1 px-4 rounded-md hover:bg-slate-200 hover:scale-110 transition-all duration-300 active:scale-95"
             onClick={() => setShowEmployeePrint(true)}
           >
             <FcPrint className="text-lg" />

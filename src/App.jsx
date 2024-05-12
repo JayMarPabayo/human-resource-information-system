@@ -8,7 +8,9 @@ import Dashboard from "./pages/Dashboard";
 import Employee from "./pages/Employee";
 import Report from "./pages/Report";
 import Administration from "./pages/Administration";
+import Account from "./pages/Account";
 import PageNotFound from "./pages/PageNotFound";
+import ProtectedRoute from "./utils/ProtectedRoute";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,11 +26,18 @@ const App = () => {
       <ReactQueryDevtools initialIsOpen={false} />
       <BrowserRouter>
         <Routes>
-          <Route element={<AppLayout />}>
+          <Route
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<Navigate replace to="dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="administration" element={<Administration />} />
             <Route path="employee" element={<Employee />} />
+            <Route path="account" element={<Account />} />
             <Route path="reports" element={<Report />} />
           </Route>
           <Route path="login" element={<Login />} />

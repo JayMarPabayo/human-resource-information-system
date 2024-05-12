@@ -1,6 +1,9 @@
-import { FcReading, FcEmptyTrash, FcSynchronize } from "react-icons/fc";
-import { IoMdFemale, IoMdMale } from "react-icons/io";
 import { useState } from "react";
+
+import { FcEmptyTrash, FcPhone } from "react-icons/fc";
+import { MdEmail } from "react-icons/md";
+import { IoMdFemale, IoMdMale } from "react-icons/io";
+import { BsFillEyeFill, BsPenFill } from "react-icons/bs";
 
 import PropTypes from "prop-types";
 import Modal from "../../utils/Modal";
@@ -45,11 +48,22 @@ const TableRow = ({
         <td className="p-1">{employee.employeeDesignation || "N/A"}</td>
 
         <td className="p-1">
-          {employee.employeeEmail
-            ? employee.employeeEmail
-            : employee.employeeMobile
-            ? employee.employeeMobile
-            : "N/A"}
+          <div className="flex items-center justify-start gap-3">
+            {employee.employeeEmail ? (
+              <MdEmail className="text-lg" />
+            ) : <FcPhone className="text-lg" /> ? (
+              <FcPhone className="text-lg" />
+            ) : (
+              ""
+            )}
+            <span>
+              {employee.employeeEmail
+                ? employee.employeeEmail
+                : employee.employeeMobile
+                ? employee.employeeMobile
+                : "N/A"}
+            </span>
+          </div>
         </td>
 
         <td className="flex justify-between align-middle text-base p-1 gap-2">
@@ -59,7 +73,7 @@ const TableRow = ({
             className="text-slate-700 border border-slate-600 border-opacity-20 shadow-md w-full bg-slate-300 py-1 px-2 rounded-md hover:bg-slate-200 hover:scale-110 transition-all duration-300"
             onClick={() => setShowViewForm((bol) => !bol)}
           >
-            <FcReading className="mx-auto" />
+            <BsFillEyeFill className="mx-auto text-emerald-600" />
           </button>
           <button
             type="button"
@@ -67,7 +81,7 @@ const TableRow = ({
             className="text-slate-700 border border-slate-600 border-opacity-20 shadow-md w-full bg-slate-300 py-1 px-2 rounded-md hover:bg-slate-200 hover:scale-110 transition-all duration-300"
             onClick={() => setShowUpdateForm((bol) => !bol)}
           >
-            <FcSynchronize className="mx-auto" />
+            <BsPenFill className="mx-auto text-stone-600" />
           </button>
           <button
             type="button"
