@@ -1,14 +1,14 @@
-import { useState } from "react";
+// import { useState } from "react";
 
 import LoginForm from "../features/authentication/LoginForm";
-import SignupForm from "../features/authentication/SignupForm";
+// import SignupForm from "../features/authentication/SignupForm";
 
 const Login = () => {
-  const [showLoginForm, setShowLoginForm] = useState(true);
+  // const [showLoginForm, setShowLoginForm] = useState(true);
 
-  const toggleForm = () => {
-    setShowLoginForm(!showLoginForm);
-  };
+  // const toggleForm = () => {
+  //   setShowLoginForm(!showLoginForm);
+  // };
 
   return (
     <div className="bg-gradient-to-bl from-slate-400 to-slate-600 h-screen w-full flex justify-center items-center gap-x-10">
@@ -30,11 +30,12 @@ const Login = () => {
           eveniet error dolores fugit est quam qui sapiente vitae.
         </p>
       </div>
-      {showLoginForm ? (
+      <LoginForm />
+      {/* {showLoginForm ? (
         <LoginForm toggle={toggleForm} />
       ) : (
         <SignupForm toggle={toggleForm} />
-      )}
+      )} */}
     </div>
   );
 };

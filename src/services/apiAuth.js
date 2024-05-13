@@ -17,28 +17,72 @@ export async function signup({ userFullName, userEmail, userPassword }) {
   return data;
 }
 
-export async function login({ email, password }) {
-  let { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+export async function login({ username, password }) {
+  console.log(password);
+  let { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("userName", username)
+    .single();
 
-  if (error) throw new Error(error.message);
+  if (error) throw new Error("Username not found");
+
+  // Password check
+  if (password !== data.userPassword) {
+    throw new Error("Incorrect password");
+  }
+
+  try {
+    localStorage.setItem("user", JSON.stringify(data));
+  } catch (storageError) {
+    console.error("Error saving to localStorage:", storageError);
+  }
+
+  let id = data.id;
+  const now = new Date();
+  const isoString = now.toISOString();
+  const { error: updatError } = await supabase
+    .from("users")
+    .update({ userLastLogin: isoString })
+    .eq("id", id);
+
+  if (updatError) throw new Error(updatError.message);
+
   return data;
 }
 
 export async function getCurrentUser() {
-  const { data: session } = await supabase.auth.getSession();
-  if (!session.session) return null;
+  try {
+    const userString = localStorage.getItem("user");
 
-  const { data, error } = await supabase.auth.getUser();
-  if (error) throw new Error(error.message);
-  return data?.user;
+    if (userString) {
+      return JSON.parse(userString);
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error retrieving user from localStorage:", error);
+    return null;
+  }
 }
 
-export async function logout() {
-  const { error } = await supabase.auth.signOut();
+export async function logout(id) {
+  const now = new Date();
+  const isoString = now.toISOString();
+  const { data, error } = await supabase
+    .from("users")
+    .update({ userLastLogout: isoString })
+    .eq("id", id);
+
   if (error) throw new Error(error.message);
+
+  try {
+    localStorage.removeItem("user");
+  } catch (storageError) {
+    console.error("Error saving to localStorage:", storageError);
+  }
+
+  return data;
 }
 
 export async function updateCurrentUser({ fullname, password }) {

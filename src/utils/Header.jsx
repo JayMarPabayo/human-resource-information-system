@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 import { FaUserCircle } from "react-icons/fa";
-import { MdManageAccounts } from "react-icons/md";
+// import { MdManageAccounts } from "react-icons/md";
 import { IoLogOut } from "react-icons/io5";
 import { CgSpinner } from "react-icons/cg";
 
@@ -13,8 +13,7 @@ const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
   const { logout, isLoggingOut } = useLogout();
   const { user } = useUser();
-
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
@@ -37,6 +36,12 @@ const Header = () => {
     };
   }, []);
 
+  function handleLogout() {
+    logout({
+      id: user.id,
+    });
+  }
+
   return (
     <header className="bg-slate-200 px-[5%] py-3 flex justify-end gap-3 items-center text-gray-800">
       <div className="flex items-center me-auto">
@@ -49,15 +54,15 @@ const Header = () => {
           ref={menuRef}
           className="absolute top-11 right-20 z-50 py-2 w-60 bg-slate-200 shadow-md rounded-md text-sm font-medium tracking-wide text-slate-600 border border-slate-300"
         >
-          <button
+          {/* <button
             onClick={() => navigate("/account")}
             className="w-full flex justify-start items-center gap-2 p-2 hover:bg-slate-100 hover:text-slate-700 duration-300"
           >
             <MdManageAccounts className="text-lg" />
             <span>Account</span>
-          </button>
+          </button> */}
           <button
-            onClick={logout}
+            onClick={handleLogout}
             disabled={isLoggingOut}
             className="w-full flex justify-start items-center gap-2 p-2 hover:bg-slate-100 hover:text-slate-700 duration-300"
           >
@@ -72,7 +77,7 @@ const Header = () => {
         </div>
       )}
       <span className="text-xs font-medium tracking-wide text-slate-700 drop-shadow-md">
-        {user?.user_metadata.fullname.toUpperCase()}
+        {user?.userFullName.toUpperCase()}
       </span>
       <button
         ref={buttonRef}

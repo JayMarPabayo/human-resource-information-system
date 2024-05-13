@@ -11,9 +11,9 @@ export function useLogin() {
     isError: errorLogin,
     error,
   } = useMutation({
-    mutationFn: ({ email, password }) => loginApi({ email, password }),
+    mutationFn: ({ username, password }) => loginApi({ username, password }),
     onSuccess: (user) => {
-      queryClient.setQueryData(["user"], user.user);
+      queryClient.setQueryData(["user"], user);
       navigate("/dashboard", { replace: true });
     },
     onError: (err) => {
