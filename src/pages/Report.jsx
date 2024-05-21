@@ -18,7 +18,7 @@ import Employees from "../features/reports/Employees.jsx";
 
 const Report = () => {
   const [searchKey, setSearchKey] = useState("");
-  const [sortBy, setSortBy] = useState("asc");
+  const [sortBy, setSortBy] = useState(true);
 
   const [showEmployeesPrint, setShowEmployeesPrint] = useState(false);
 
@@ -37,34 +37,19 @@ const Report = () => {
   };
 
   const { isLoading, data } = useQuery({
-    queryKey: ["employees"],
-    queryFn: () => getEmployees(),
+    queryKey: ["employees", searchKey, sortBy],
+    queryFn: () => getEmployees(searchKey, sortBy),
   });
 
   const departments = [
-    ...new Set(data?.map((employee) => employee.departments.departmentName)),
+    ...new Set(data?.map((employee) => employee.departmentname)),
   ];
-  let filteredData =
-    searchKey || selectedDepartment
-      ? data?.filter((employee) => {
-          const fullName =
-            `${employee.employeeFirstName} ${employee.employeeLastName} ${employee.employeeMiddleName} ${employee.employeeDesignation} ${employee.departments.departmentName}`.toLowerCase();
-          const department = employee.departments.departmentName.toLowerCase();
-          const designation = employee.employeeDesignation.toLowerCase();
 
-          return (
-            fullName.includes(searchKey?.toLowerCase()) &&
-            department.includes(selectedDepartment?.toLowerCase()) &&
-            designation.includes(selectedDesignation?.toLowerCase())
-          );
-        })
-      : data;
-  filteredData = sortByFullName(filteredData, sortBy);
   const designations = [
     ...new Set(
       data
         ?.filter((employee) =>
-          employee.departments.departmentName
+          employee.departmentname
             .toLowerCase()
             .includes(selectedDepartment?.toLowerCase())
         )
@@ -98,15 +83,7 @@ const Report = () => {
                 <th
                   colSpan={2}
                   className="p-0"
-                  onClick={() =>
-                    setSortBy((curr) => {
-                      if (curr === "asc") {
-                        return "desc";
-                      } else {
-                        return "asc";
-                      }
-                    })
-                  }
+                  onClick={() => setSortBy((curr) => !curr)}
                 >
                   <div className="py-2 px-1 flex items-center justify-start gap-3 cursor-pointer hover:bg-slate-200 hover:rounded-sm duration-300">
                     <span>Name</span>
@@ -114,7 +91,7 @@ const Report = () => {
                       Last Name, First Name, M.I.
                     </span>
                     <span className="mx-auto">
-                      {sortBy === "asc" ? (
+                      {sortBy === true ? (
                         <FcAlphabeticalSortingAz className="text-base" />
                       ) : (
                         <FcAlphabeticalSortingZa className="text-base" />
@@ -223,7 +200,7 @@ const Report = () => {
               </tr>
             </thead>
             <tbody className="w-full text-xs font-normal tracking-wide">
-              {filteredData?.map((employee, index) => {
+              {data?.map((employee, index) => {
                 return (
                   <TableRow key={index} employee={employee} index={index} />
                 );
@@ -237,7 +214,7 @@ const Report = () => {
       <Modal open={showEmployeesPrint}>
         <Employees
           setShowEmployeePrint={setShowEmployeesPrint}
-          employees={filteredData}
+          employees={data}
           department={selectedDepartment}
           designation={selectedDesignation}
         />
@@ -245,24 +222,5 @@ const Report = () => {
     </>
   );
 };
-
-function sortByFullName(data, order = "asc") {
-  const compareFullName = (a, b) => {
-    const fullNameA =
-      `${a.employeeFirstName} ${a.employeeMiddleName} ${a.employeeLastName}`.toLowerCase();
-    const fullNameB =
-      `${b.employeeFirstName} ${b.employeeMiddleName} ${b.employeeLastName}`.toLowerCase();
-
-    if (fullNameA < fullNameB) {
-      return order === "asc" ? -1 : 1;
-    } else if (fullNameA > fullNameB) {
-      return order === "asc" ? 1 : -1;
-    } else {
-      return 0;
-    }
-  };
-
-  return data?.slice().sort(compareFullName);
-}
 
 export default Report;

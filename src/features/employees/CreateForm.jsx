@@ -115,8 +115,11 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
   let isLoading = employeeCreating || employeeUpdating;
 
   function onSubmit(data) {
-    delete data.created_at;
-    delete data.departments;
+    capitalizeFirstLetters(data);
+    delete data.createdAt;
+    delete data.departmentname;
+
+    console.log(data);
     if (isEditSession) {
       updateEmployee(
         {
@@ -1268,6 +1271,16 @@ const CreateForm = ({ onClose, employeeData = {} }) => {
     );
   }
 };
+
+function capitalizeFirstLetters(obj) {
+  for (const key in obj) {
+    if (typeof obj[key] === "string") {
+      obj[key] = obj[key].charAt(0).toUpperCase() + obj[key].slice(1);
+    }
+  }
+  return obj;
+}
+
 CreateForm.propTypes = {
   onClose: PropTypes.func,
   employeeData: PropTypes.object,

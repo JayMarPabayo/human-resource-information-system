@@ -51,7 +51,6 @@ const ViewDataForm = ({ onClose, employeeData = {} }) => {
   ];
 
   const { ...values } = employeeData;
-  values.employeeDepartment = values.departments?.departmentName;
   const { register } = useForm({
     defaultValues: values,
   });
@@ -118,7 +117,7 @@ const ViewDataForm = ({ onClose, employeeData = {} }) => {
               textSize="text-xs"
               width="w-36"
               placeholder="Department"
-              {...register("employeeDepartment")}
+              {...register("departmentname")}
               readOnly
             />
             <TextInput

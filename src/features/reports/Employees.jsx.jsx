@@ -116,7 +116,7 @@ const Employees = ({
                     {employee.employeeGender || "N/A"}
                   </td>
                   <td className="py-2 px-1">
-                    {employee.departments?.departmentName || "N/A"}
+                    {employee.departmentname || "N/A"}
                   </td>
                   <td className="py-2 px-1">
                     {employee.employeeDesignation || "N/A"}

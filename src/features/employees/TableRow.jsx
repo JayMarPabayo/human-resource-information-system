@@ -43,7 +43,7 @@ const TableRow = ({
     }`}
         </td>
 
-        <td className="p-1">{employee.departments?.departmentName || "N/A"}</td>
+        <td className="p-1">{employee.departmentname || "N/A"}</td>
 
         <td className="p-1">{employee.employeeDesignation || "N/A"}</td>
 

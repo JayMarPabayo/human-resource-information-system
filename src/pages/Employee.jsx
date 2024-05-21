@@ -15,30 +15,25 @@ import Spinner from "../utils/Spinner";
 import CreateFrom from "../features/employees/CreateForm";
 import Modal from "../utils/Modal";
 import TableRow from "../features/employees/TableRow";
+import TableFoot from "../utils/TableFoot";
 
 const Employee = () => {
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
   const [openCreateFormModal, setOpenCreateFormModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [searchKey, setSearchKey] = useState("");
-  const [sortBy, setSortBy] = useState("asc");
+  const [sortBy, setSortBy] = useState(true);
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
 
   const { isDeleting, deleteEmployee } = useDeleteEmployee();
 
-  const { isLoading, data } = useQuery({
-    queryKey: ["employees"],
-    queryFn: () => getEmployees(),
-  });
+  const { isLoading, data: { data: employees = [], count = 0 } = {} } =
+    useQuery({
+      queryKey: ["employees", searchKey, sortBy, page, limit],
+      queryFn: () => getEmployees(searchKey, sortBy, page, limit),
+    });
 
-  let filteredData = searchKey
-    ? data?.filter((employee) => {
-        const fullName =
-          `${employee.employeeFirstName} ${employee.employeeLastName} ${employee.employeeMiddleName} ${employee.employeeDesignation} ${employee.departments.departmentName}`.toLowerCase();
-        return fullName.includes(searchKey.toLowerCase());
-      })
-    : data;
-
-  filteredData = sortByFullName(filteredData, sortBy);
   return (
     <>
       <section className="flex justify-between items-center">
@@ -57,24 +52,16 @@ const Employee = () => {
         </button>
       </section>
 
-      <div className="inline-block min-w-full py-2">
-        <div className="overflow-hidden">
+      <div className="inline-block min-w-full pt-2">
+        <div className="max-h-[555px] overflow-y-auto">
           <table className="w-full border border-slate-600 border-opacity-10 shadow-sm text-xs">
-            <thead className="text-left">
+            <thead className="text-left ">
               <tr className="bg-slate-300 text-slate-600 py-2">
                 <th className="py-2 px-2">ID</th>
                 <th
                   colSpan={2}
                   className="p-0"
-                  onClick={() =>
-                    setSortBy((curr) => {
-                      if (curr === "asc") {
-                        return "desc";
-                      } else {
-                        return "asc";
-                      }
-                    })
-                  }
+                  onClick={() => setSortBy((curr) => !curr)}
                 >
                   <div className="py-2 px-1 flex items-center justify-start gap-3 cursor-pointer hover:bg-slate-200 hover:rounded-sm duration-300">
                     <span>Name</span>
@@ -82,7 +69,7 @@ const Employee = () => {
                       Last Name, First Name, M.I.
                     </span>
                     <span className="mx-auto">
-                      {sortBy === "asc" ? (
+                      {sortBy === true ? (
                         <FcAlphabeticalSortingAz className="text-base" />
                       ) : (
                         <FcAlphabeticalSortingZa className="text-base" />
@@ -97,18 +84,20 @@ const Employee = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredData?.map((employee, index) => (
-                <TableRow
-                  key={index}
-                  employee={employee}
-                  index={index}
-                  setOpenConfirmModal={setOpenConfirmModal}
-                  setSelectedEmployee={setSelectedEmployee}
-                  openUpdateFormModal={() =>
-                    setOpenCreateFormModal((bol) => !bol)
-                  }
-                />
-              ))}
+              {employees?.map((employee, index) => {
+                return (
+                  <TableRow
+                    key={index}
+                    employee={employee}
+                    index={index}
+                    setOpenConfirmModal={setOpenConfirmModal}
+                    setSelectedEmployee={setSelectedEmployee}
+                    openUpdateFormModal={() =>
+                      setOpenCreateFormModal((bol) => !bol)
+                    }
+                  />
+                );
+              })}
             </tbody>
           </table>
           {isLoading && <Spinner />}
@@ -151,6 +140,13 @@ const Employee = () => {
             </section>
           </Modal>
         </div>
+        <TableFoot
+          limit={limit}
+          setLimit={setLimit}
+          page={page}
+          setPage={setPage}
+          totalRows={count}
+        />
       </div>
       <Modal open={openCreateFormModal} size="w-[78rem]">
         <CreateFrom onClose={() => setOpenCreateFormModal(false)} />
@@ -158,24 +154,5 @@ const Employee = () => {
     </>
   );
 };
-
-function sortByFullName(data, order = "asc") {
-  const compareFullName = (a, b) => {
-    const fullNameA =
-      `${a.employeeFirstName} ${a.employeeMiddleName} ${a.employeeLastName}`.toLowerCase();
-    const fullNameB =
-      `${b.employeeFirstName} ${b.employeeMiddleName} ${b.employeeLastName}`.toLowerCase();
-
-    if (fullNameA < fullNameB) {
-      return order === "asc" ? -1 : 1;
-    } else if (fullNameA > fullNameB) {
-      return order === "asc" ? 1 : -1;
-    } else {
-      return 0;
-    }
-  };
-
-  return data?.slice().sort(compareFullName);
-}
 
 export default Employee;

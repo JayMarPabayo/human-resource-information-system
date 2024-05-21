@@ -1,19 +1,32 @@
 import supabase from "./supabase";
 
-export async function getEmployees() {
-  let { data, error } = await supabase
-    .from("employees")
+export async function getEmployees(keyword = "", sortBy, page = 1, limit = 10) {
+  const startItem = (page - 1) * limit + 1;
+  let range = limit + startItem;
+  console.log("StartItem: ", startItem);
+  console.log("Page: ", page);
+  console.log("Limit: ", limit);
+  let query = supabase
+    .from("employeesdata")
     .select(
-      `*, departments(*), children(*), educations(*), eligibilities(*), workExperiences(*)`
+      `*, children(*), educations(*), eligibilities(*), workExperiences(*)`,
+      { count: "exact" }
     )
-    .order("employeeFirstName", { ascending: true });
+    .or(
+      `departmentname.ilike.%${keyword}%,employeeFirstName.ilike.%${keyword}%,employeeMiddleName.ilike.%${keyword}%,employeeLastName.ilike.%${keyword}%,employeeDesignation.ilike.%${keyword}%`
+    )
+    .order("employeeLastName", {
+      ascending: sortBy,
+    })
+    .range(startItem, range);
 
+  const { data, error, count } = await query;
   if (error) {
     console.error(error);
-    throw new error("fetching employees records failed");
+    throw new Error("Fetching employees records failed");
   }
 
-  return data;
+  return { data, count };
 }
 
 export async function createUpdateEmployee(employee, id) {
@@ -34,8 +47,8 @@ export async function createUpdateEmployee(employee, id) {
   if (id) {
     query = query.update(employeesWithNull).eq("id", id);
   }
-  console.log(workExperiences);
   const { data, error } = await query.select();
+
   // -- Children
   const eid = data[0].id;
   if (eid) {
