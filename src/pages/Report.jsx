@@ -15,18 +15,19 @@ import Spinner from "../utils/Spinner";
 import TableRow from "../features/reports/TableRow";
 import Modal from "../utils/Modal.jsx";
 import Employees from "../features/reports/Employees.jsx";
+import TableFoot from "../utils/TableFoot";
 
 const Report = () => {
-  const [searchKey, setSearchKey] = useState("");
-  const [sortBy, setSortBy] = useState(true);
-
   const [showEmployeesPrint, setShowEmployeesPrint] = useState(false);
-
   const [departmentDropdown, setDepartmentDropdown] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState("");
-
   const [designationDropdown, setDesignationDropdown] = useState(false);
   const [selectedDesignation, setSelectedDesignation] = useState("");
+
+  const [searchKey, setSearchKey] = useState("");
+  const [sortBy, setSortBy] = useState(true);
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
 
   const toggleDepartmentDropdown = () => {
     setDepartmentDropdown(!departmentDropdown);
@@ -36,18 +37,19 @@ const Report = () => {
     setDesignationDropdown(!designationDropdown);
   };
 
-  const { isLoading, data } = useQuery({
-    queryKey: ["employees", searchKey, sortBy],
-    queryFn: () => getEmployees(searchKey, sortBy),
-  });
+  const { isLoading, data: { data: employees = [], count = 0 } = {} } =
+    useQuery({
+      queryKey: ["employees", searchKey, sortBy, page, limit],
+      queryFn: () => getEmployees(searchKey, sortBy, page, limit),
+    });
 
   const departments = [
-    ...new Set(data?.map((employee) => employee.departmentname)),
+    ...new Set(employees?.map((employee) => employee.departmentname)),
   ];
 
   const designations = [
     ...new Set(
-      data
+      employees
         ?.filter((employee) =>
           employee.departmentname
             .toLowerCase()
@@ -75,7 +77,7 @@ const Report = () => {
         </button>
       </section>
       <div className="inline-block min-w-full py-2 h-full">
-        <div className="overflow-hidden h-full">
+        <div className="max-h-[555px] overflow-y-auto">
           <table className="w-full border border-slate-600 border-opacity-10 shadow-sm text-xs">
             <thead className="text-left">
               <tr className="bg-slate-300 text-slate-600 py-2">
@@ -200,7 +202,7 @@ const Report = () => {
               </tr>
             </thead>
             <tbody className="w-full text-xs font-normal tracking-wide">
-              {data?.map((employee, index) => {
+              {employees?.map((employee, index) => {
                 return (
                   <TableRow key={index} employee={employee} index={index} />
                 );
@@ -209,12 +211,19 @@ const Report = () => {
           </table>
           {isLoading && <Spinner />}
         </div>
+        <TableFoot
+          limit={limit}
+          setLimit={setLimit}
+          page={page}
+          setPage={setPage}
+          totalRows={count}
+        />
       </div>
 
       <Modal open={showEmployeesPrint}>
         <Employees
           setShowEmployeePrint={setShowEmployeesPrint}
-          employees={data}
+          employees={employees}
           department={selectedDepartment}
           designation={selectedDesignation}
         />

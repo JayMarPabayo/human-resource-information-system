@@ -53,6 +53,7 @@ const TableFoot = ({ limit, setLimit, page, setPage, totalRows }) => {
       </span>
 
       <button
+        title="First Page"
         disabled={page === 1}
         onClick={handleFirstPage}
         className={`text-xl text-slate-400 duration-300 ${
@@ -63,6 +64,7 @@ const TableFoot = ({ limit, setLimit, page, setPage, totalRows }) => {
         <MdFirstPage />
       </button>
       <button
+        title="Previous Page"
         disabled={page === 1}
         onClick={handlePrevPage}
         className={`text-xl text-slate-400 duration-300 ${
@@ -73,6 +75,7 @@ const TableFoot = ({ limit, setLimit, page, setPage, totalRows }) => {
         <MdNavigateBefore />
       </button>
       <button
+        title="Next Page"
         disabled={page === lastPage}
         onClick={handleNextPage}
         className={`text-xl text-slate-400 duration-300 ${
@@ -83,6 +86,7 @@ const TableFoot = ({ limit, setLimit, page, setPage, totalRows }) => {
         <MdNavigateNext />
       </button>
       <button
+        title="Last Page"
         disabled={page === lastPage}
         onClick={handleLastPage}
         className={`text-xl text-slate-400 duration-300 ${

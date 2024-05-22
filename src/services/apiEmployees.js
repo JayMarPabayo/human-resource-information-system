@@ -1,11 +1,8 @@
 import supabase from "./supabase";
 
 export async function getEmployees(keyword = "", sortBy, page = 1, limit = 10) {
-  const startItem = (page - 1) * limit + 1;
-  let range = limit + startItem;
-  console.log("StartItem: ", startItem);
-  console.log("Page: ", page);
-  console.log("Limit: ", limit);
+  const startItem = (page - 1) * limit;
+  let range = limit - 1 + startItem;
   let query = supabase
     .from("employeesdata")
     .select(
@@ -25,6 +22,8 @@ export async function getEmployees(keyword = "", sortBy, page = 1, limit = 10) {
     console.error(error);
     throw new Error("Fetching employees records failed");
   }
+
+  console.log(data?.data);
 
   return { data, count };
 }
