@@ -42,9 +42,11 @@ const TableFoot = ({ limit, setLimit, page, setPage, totalRows }) => {
           setLimit(Number(event.target.value));
         }}
       >
-        <option value={5}>5</option>
-        <option value={10}>10</option>
-        <option value={15}>15</option>
+        {Array.from({ length: Math.ceil(totalRows / 5) }, (_, index) => (
+          <option key={index} value={(index + 1) * 5}>
+            {(index + 1) * 5}
+          </option>
+        ))}
       </select>
       <span className="w-28 text-center font-medium tracking-wider">
         <span className="font-bold text-teal-700">{startItem}</span>-

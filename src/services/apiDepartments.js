@@ -77,3 +77,31 @@ export async function deleteDepartment(id) {
 
   return data;
 }
+
+export async function getUniqueDepartments() {
+  const { data, error } = await supabase
+    .from("uniquedepartments")
+    .select(`departmentname`);
+
+  if (error) {
+    console.error(error);
+    throw new Error("Fetching unique employee departments failed");
+  }
+
+  return data;
+}
+
+export async function getUniqueDesignations(department) {
+  let query = supabase.from("uniquedesignations").select(`employeeDesignation`);
+
+  if (department) query = query.eq("departmentname", department);
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error(error);
+    throw new Error("Fetching unique employee designations failed");
+  }
+
+  return data;
+}

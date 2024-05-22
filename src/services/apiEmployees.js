@@ -1,14 +1,31 @@
 import supabase from "./supabase";
 
-export async function getEmployees(keyword = "", sortBy, page = 1, limit = 10) {
+export async function getEmployees(
+  keyword = "",
+  sortBy,
+  page = 1,
+  limit = 10,
+  filterBy
+) {
   const startItem = (page - 1) * limit;
   let range = limit - 1 + startItem;
+
   let query = supabase
     .from("employeesdata")
     .select(
       `*, children(*), educations(*), eligibilities(*), workExperiences(*)`,
       { count: "exact" }
-    )
+    );
+
+  if (filterBy) {
+    const { departmentname, employeeDesignation } = filterBy;
+
+    if (departmentname) query = query.eq("departmentname", departmentname);
+    if (employeeDesignation)
+      query = query.eq("employeeDesignation", employeeDesignation);
+  }
+
+  query = query
     .or(
       `departmentname.ilike.%${keyword}%,employeeFirstName.ilike.%${keyword}%,employeeMiddleName.ilike.%${keyword}%,employeeLastName.ilike.%${keyword}%,employeeDesignation.ilike.%${keyword}%`
     )
@@ -22,8 +39,6 @@ export async function getEmployees(keyword = "", sortBy, page = 1, limit = 10) {
     console.error(error);
     throw new Error("Fetching employees records failed");
   }
-
-  console.log(data?.data);
 
   return { data, count };
 }
