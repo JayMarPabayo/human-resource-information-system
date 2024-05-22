@@ -162,13 +162,13 @@ const Report = () => {
                     <span>{selectedDesignation || "Designation"}</span>
                     <TiArrowSortedDown className="text-lg" />
                     <div
-                      className={`absolute top-full w-full ${
+                      className={`absolute top-full w-full z-30 ${
                         designationDropdown ? "" : "hidden"
                       }`}
                     >
-                      <ul className="bg-slate-200 border border-slate-300 shadow-md py-2 -ms-1 font-medium">
+                      <ul className="bg-slate-200 border w-fit border-slate-300 shadow-md p-2 -ms-1 font-medium overflow-y-auto max-h-[300px]">
                         <li
-                          className="cursor-pointer hover:bg-slate-100 px-2 py-1 duration-300"
+                          className="cursor-pointer hover:bg-slate-100 px-2 py-1 duration-300 break-inside-avoid"
                           onClick={(event) => {
                             event.stopPropagation();
                             setSelectedDesignation("");
@@ -185,7 +185,7 @@ const Report = () => {
                           return (
                             <li
                               key={index}
-                              className="cursor-pointer hover:bg-slate-100 px-2 py-1 duration-300"
+                              className="cursor-pointer hover:bg-slate-100 px-2 py-1 duration-300 break-inside-avoid"
                               onClick={(event) => {
                                 event.stopPropagation();
                                 setSelectedDesignation(
