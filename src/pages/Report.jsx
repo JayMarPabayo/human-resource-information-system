@@ -52,12 +52,12 @@ const Report = () => {
     });
 
   const { data: departments } = useQuery({
-    queryKey: ["departments"],
+    queryKey: ["uniquedepartments"],
     queryFn: () => getUniqueDepartments(),
   });
 
   const { data: designations } = useQuery({
-    queryKey: ["designations", selectedDepartment],
+    queryKey: ["uniquedesignations", selectedDepartment],
     queryFn: () => getUniqueDesignations(selectedDepartment),
   });
 
@@ -72,7 +72,10 @@ const Report = () => {
           type="button"
           title="Print Table Data"
           className=" flex items-center justify-center gap-x-2 text-slate-700 border border-slate-600 border-opacity-20 shadow-md w-fit bg-slate-300 py-1 px-4 rounded-md hover:bg-slate-200 hover:scale-110 transition-all duration-300 active:scale-95"
-          onClick={() => setShowEmployeesPrint(true)}
+          onClick={() => {
+            if (employees?.length <= 0) return;
+            setShowEmployeesPrint(true);
+          }}
         >
           <FcPrint className="text-lg" />
           <span className="text-xs font-medium">Print Table</span>
@@ -162,7 +165,7 @@ const Report = () => {
                     <span>{selectedDesignation || "Designation"}</span>
                     <TiArrowSortedDown className="text-lg" />
                     <div
-                      className={`absolute top-full w-full z-30 ${
+                      className={`absolute top-full w-full ${
                         designationDropdown ? "" : "hidden"
                       }`}
                     >

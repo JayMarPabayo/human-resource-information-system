@@ -53,7 +53,7 @@ const Employee = () => {
       </section>
 
       <div className="inline-block min-w-full pt-2">
-        <div className="max-h-[555px] overflow-y-auto">
+        <div className="min-h-[400px] overflow-y-auto">
           <table className="w-full border border-slate-600 border-opacity-10 shadow-sm text-xs">
             <thead className="text-left ">
               <tr className="bg-slate-300 text-slate-600 py-2">
